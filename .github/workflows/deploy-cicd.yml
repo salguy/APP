@@ -23,7 +23,7 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          ssh -v -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'            
+          ssh -v -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@3.34.179.85 << 'EOF'            
             cd ~/salguy
             sudo git pull origin main
             sudo docker stop salguy-container || true
