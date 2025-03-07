@@ -11,7 +11,14 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4  # 코드 가져오기
-        
+      - name: Debug Secrets
+        run: |
+          if [[ -z "${{ secrets.EC2_HOST }}" ]]; then
+            echo "EC2_HOST is EMPTY!"
+          else
+            echo "EC2_HOST is SET!"
+          fi
+          
       - name: Debugging EC2_HOST
         run: echo "EC2_HOST is ${{ secrets.EC2_HOST }}"
         
