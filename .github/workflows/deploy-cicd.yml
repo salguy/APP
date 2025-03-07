@@ -1,0 +1,32 @@
+name: Deploy to EC2 (Amazon Linux 2)
+
+on:
+  push:
+    branches:
+      - main  # main 브랜치에 푸시될 때 실행
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # GitHub Actions 실행 환경
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # 코드 가져오기
+
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to EC2
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            cd ~/salguy
+            git pull origin main
+            docker stop salguy-container || true
+            docker rm salguy-container || true
+            docker rmi salguy:latest || true
+            docker build -t salguy:latest .
+            docker run -d -p 80:8000 --name salguy-container salguy:latest
+          EOF
