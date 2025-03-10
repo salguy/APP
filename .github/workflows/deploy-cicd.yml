@@ -13,7 +13,7 @@ jobs:
       - name: excuting remote ssh commands
         uses: appleboy/ssh-action@v0.1.9
         with:
-          host: ${{ secrets.ECT_HOST }} 
+          host: ${{ secrets.EC2_HOST }} 
           username: ${{ secrets.EC2_USER }} 
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           port: 22
