@@ -1,0 +1,21 @@
+name: Deploy to EC2 (Amazon Linux 2)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: excuting remote ssh commands
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ secrets.EC2_HOST }} 
+          username: ${{ secrets.EC2_USER }} 
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          port: 22
+          script: | # 실행될 스크립트 python3 -m venv venv 윈도우 환경이랑 우분투 환경에서 생성하는 디렉토리 구조가 달라서 추가
+            echo "hello world"
