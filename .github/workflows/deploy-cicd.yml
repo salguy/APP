@@ -2,33 +2,20 @@ name: Deploy to EC2 (Amazon Linux 2)
 
 on:
   push:
-    branches:
-      - main  # main 브랜치에 푸시될 때 실행
+    branches: [ main ]
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # GitHub Actions 실행 환경
+    name: deploy
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4  # 코드 가져오기
-
-     
-      - name: Set up SSH key
-        run: |
-          echo ${{ secrets.EC2_HOST }}
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-
-      - name: Deploy to EC2
-        run: |
-          ssh -v -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@3.34.179.85 << 'EOF'            
-            cd ~/salguy
-            sudo git pull origin main
-            sudo docker stop salguy-container || true
-            sudo docker rm salguy-container || true
-            sudo docker rmi salguy:latest || true
-            sudo docker build -t salguy:latest .
-            sudo docker run -d -p 80:8000 --name salguy-container salguy:latest
-          EOF
+      - name: excuting remote ssh commands
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ secrets.ECT_HOST }} 
+          username: ${{ secrets.EC2_USER }} 
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          port: 22
+          script: | # 실행될 스크립트 python3 -m venv venv 윈도우 환경이랑 우분투 환경에서 생성하는 디렉토리 구조가 달라서 추가
+            echo "hello world"
