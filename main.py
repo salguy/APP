@@ -1,30 +1,37 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-from contextlib import asynccontextmanager
-from database import database
+from starlette.middleware.cors import CORSMiddleware
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    print("Hello World!")
-    await database.connect()
-    yield
-    await database.disconnect()
 
-app = FastAPI(lifespan=lifespan)
+tags_metadata = [
+    {
+        "name": "users",
+        "description": "회원 기능",
+    },
+    {
+        "name": "history",
+        "description": "기록",
+    },
+    {
+        "name": "friend",
+        "description": "친구",
+    }
+]
 
-# CORS 설정 (필요한 경우)
+app = FastAPI(
+    openapi_tags=tags_metadata
+)
+
+origins = [
+    "http://localhost:3000",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# app.include_router(test_router.router, prefix="/api/test")
 
-
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+# app.include_router(user_router.router, tags=["users"])

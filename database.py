@@ -29,5 +29,7 @@ def get_db():
     db = SessionLocal()
     try:
         yield db
+        db.execute("PRAGMA foreign_keys = ON;")
+
     finally:
         db.close()
