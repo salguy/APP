@@ -7,10 +7,8 @@ class User(Base):
     __tablename__ = "user"
 
     id = Column(Integer, primary_key=True)
-    username = Column(String, unique=True, index=True, nullable=False, comment="사용자 닉네임")
+    name = Column(String, unique=False, index=True, nullable=False, comment="사용자 이름")
     password = Column(String, nullable=False, comment="비밀번호")
-    email = Column(String, unique=True, nullable=False, comment="이메일")
-
     medications = relationship("Medication", back_populates="user")
     medication_histories = relationship("MedicationHistory", back_populates="user")
 
@@ -21,8 +19,6 @@ class Medication(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False, comment="약 이름")
-    dosage = Column(String, nullable=False, comment="약 용량")
-    type = Column(String, nullable=False, comment="약 종류")  # 예: 알약, 액체 등
 
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False, comment="사용자 ID")
     user = relationship("User", back_populates="medications")
@@ -34,10 +30,9 @@ class MedicationHistory(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False, comment="사용자 ID")
     medication_id = Column(Integer, ForeignKey("medication.id"), nullable=False, comment="복용한 약 ID")
+    dosage = Column(String, nullable=False, comment="약 용량(mg)")
     taken_at = Column(DateTime, default=func.now(), comment="복용 시각")
-    dosage_taken = Column(String, nullable=False, comment="복용한 용량")
     is_taken = Column(Boolean, default=False, comment="복용 여부")
-
     user = relationship("User", back_populates="medication_histories")
     medication = relationship("Medication", back_populates="medication_histories")
 
