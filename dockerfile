@@ -1,5 +1,5 @@
 # 1. Python 이미지를 기본 이미지로 사용
-FROM python:3.11.5-slim
+FROM python:3.13.2-slim
 
 # 2. 작업 디렉토리 설정
 WORKDIR /home/salguy
