@@ -1,10 +1,12 @@
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from starlette.config import Config
+from dotenv import load_dotenv
+import os
 
-config = Config('.env')
-SQLALCHEMY_DATABASE_URL = config('SQLALCHEMY_DATABASE_URL')
+load_dotenv()  # .env 파일 로드
+
+SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL")  # 환경 변수 가져오기
 
 if SQLALCHEMY_DATABASE_URL.startswith("sqlite"):
     engine = create_engine(
@@ -14,7 +16,6 @@ else:
     engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base = declarative_base()
 naming_convention = {
     "ix": 'ix_%(column_0_label)s',
     "uq": "uq_%(table_name)s_%(column_0_name)s",
@@ -22,14 +23,15 @@ naming_convention = {
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
     "pk": "pk_%(table_name)s"
 }
-Base.metadata = MetaData(naming_convention=naming_convention)
+
+Base = declarative_base(metadata = MetaData(naming_convention=naming_convention))
 
 
 def get_db():
     db = SessionLocal()
-    try:
-        yield db
+    try:        
         db.execute("PRAGMA foreign_keys = ON;")
+        yield db
 
     finally:
         db.close()
