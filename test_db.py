@@ -7,7 +7,7 @@ from datetime import datetime
 db: Session = SessionLocal()
 
 # 1️⃣ 사용자 추가
-user = User(name="홍길동", password="securepassword")
+user = User(name="홍길동")
 db.add(user)
 db.commit()
 db.refresh(user)  # id를 가져오기 위해 refresh
@@ -24,7 +24,6 @@ med_history = MedicationHistory(
     medication_id=medication.id,
     dosage_mg="500",
     taken_at=datetime(2025, 3, 12, 8, 0),  # 2025년 3월 11일 08:00
-    is_taken=True  # ✅ 복용 여부 추가
 )
 db.add(med_history)
 db.commit()

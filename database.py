@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, MetaData
+from sqlalchemy import create_engine, MetaData, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
@@ -30,8 +30,8 @@ Base = declarative_base(metadata = MetaData(naming_convention=naming_convention)
 def get_db():
     db = SessionLocal()
     try:        
-        db.execute("PRAGMA foreign_keys = ON;")
-        yield db
+        db.execute(text("PRAGMA foreign_keys = ON;"))
+        return db
 
     finally:
         db.close()

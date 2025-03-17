@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-
+from domain.medicineInfo import router as medicineInfoRouter
 
 tags_metadata = [
     {
@@ -8,12 +8,8 @@ tags_metadata = [
         "description": "회원 기능",
     },
     {
-        "name": "history",
-        "description": "기록",
-    },
-    {
-        "name": "friend",
-        "description": "친구",
+        "name": "medicineInfo",
+        "description": "복약 정보",
     }
 ]
 
@@ -34,4 +30,4 @@ app.add_middleware(
 )
 
 
-# app.include_router(user_router.router, tags=["users"])
+app.include_router(medicineInfoRouter.router, tags=["medicineInfo"])
