@@ -53,3 +53,11 @@ class MedicationRecordCreate(BaseModel):
                 status_code=400,
                 detail=f"날짜 형식이 올바르지 않습니다: {value} , (YY.MM.DD.HH.MM 형식이어야 함)"
             )
+            
+    @field_validator("taken_at")
+    def validate_taken_at(cls, value):
+        taken_time = datetime.strptime(value, "%y.%m.%d.%H.%M")  # 문자열을 datetime으로 변환
+        if taken_time > datetime.now():
+            raise ValueError("taken_at은 현재 시각보다 과거여야 합니다.")
+
+        return value  # 검증 통과 시 그대로 반환
