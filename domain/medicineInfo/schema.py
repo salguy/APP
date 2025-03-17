@@ -3,7 +3,7 @@ from datetime import datetime
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from database import get_db  # 세션 가져오기
-from models import User  # User 모델 가져오기
+from models import User, Medication  # User 모델 가져오기
 
 class MedicationRecordCreate(BaseModel):
     user_id: int
@@ -16,7 +16,7 @@ class MedicationRecordCreate(BaseModel):
     # 1️⃣ 유저 존재 여부 검증
     @field_validator("user_id")
     @classmethod
-    def validate_user_exists(cls, value, values):
+    def validate_user_exists(cls, value):
         db: Session = get_db()  # DB 세션 가져오기
         user = db.query(User).filter(User.id == value).first()
         db.close()  # 세션 닫기
@@ -27,7 +27,21 @@ class MedicationRecordCreate(BaseModel):
                 detail=f"존재하지 않는 user_id: {value}"
             )
         return value
+# 약 존재 여부 검증
+    @field_validator("medication_id")
+    @classmethod
+    def validate_user_exists(cls, value):
+        db: Session = get_db()  # DB 세션 가져오기
+        user = db.query(Medication).filter(Medication.id == value).first()
+        db.close()  # 세션 닫기
 
+        if not user:
+            raise HTTPException(
+                status_code=400,
+                detail=f"존재하지 않는 medication_id: {value}"
+            )
+        return value
+    
  # 날짜 형식 검증 (YY:MM:DD:HH:MM)
     @field_validator("taken_at", "scheduled_time")
     @classmethod    
