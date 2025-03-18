@@ -27,4 +27,4 @@ def create_medication_record(db: Session, record: MedicationRecordCreate):
     db.refresh(history)  # 기록을 새로 고침
     db.refresh(schedule)  # 일정도 새로 고침
 
-    return {"history_id": history.id, "schedule_id": schedule.id}  # 기록과 일정 ID 반환
+    return {"user_id": record.user_id, "history_id": history.id, "schedule_id": schedule.id}  # 기록과 일정 ID 반환
