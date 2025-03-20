@@ -45,10 +45,10 @@ def get_medication_record(db: Session, record: MedicationRecordGet):
     # 특정 유저(user_id)와 스케줄(schedule_id)에 맞는 복약 이력을 조회
     medication_records = db.query(MedicationSchedule).filter(
         MedicationSchedule.user_id == record.user_id,
-        MedicationSchedule.scheduled_time == record.schedule_id
+        MedicationSchedule.id == record.schedule_id
     ).all()
 
     if not medication_records:
         raise ValueError(f"해당 조건(user_id={record.user_id}, schedule_id={record.schedule_id})에 맞는 복약 정보를 찾을 수 없습니다.")
 
-    return medication_records
+    return {"medication record": medication_records}

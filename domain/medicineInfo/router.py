@@ -23,13 +23,14 @@ async def add_medication_record(record: MedicationRecordCreate, db: Session = De
     
     
 @router.get("/api/get_medication_history", summary="복약 정보 호출")
-async def add_medication_record(record: MedicationRecordGet, db: Session = Depends(get_db)):
+async def get_medication_history(user_id: int, schedule_id: int, db: Session = Depends(get_db)):
     """
     특정 유저의 복약 정보를 호출하는 엔드포인트입니다.
     - **user_id**:          int, 유저 고유 번호(현재 1만 가능)
     - **schedule_id**:      int, 스케줄 번호   
     """
     try:
+        record = MedicationRecordGet(user_id=user_id, schedule_id=schedule_id)  
         return get_medication_record(db, record)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
