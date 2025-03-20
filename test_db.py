@@ -24,6 +24,7 @@ med_history = MedicationHistory(
     medication_id=medication.id,
     dosage_mg="500",
     taken_at=datetime(2025, 3, 12, 8, 0),  # 2025년 3월 11일 08:00
+    scheduled_time=datetime(2025, 3, 12, 8, 30)
 )
 db.add(med_history)
 db.commit()

@@ -20,9 +20,9 @@ jobs:
           script: | 
             # 기존 컨테이너가 있다면 종료 및 삭제
             cd ~/salguy/APP
+            git reset --hard
             git pull origin main
-            docker compose down
-            docker compose build --no-cache
-            docker compose up -d
+            pip install -r requirements.txt
+            pm2 restart main.py
 
             echo "Deployment completed successfully"
