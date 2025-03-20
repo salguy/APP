@@ -31,6 +31,7 @@ class MedicationSchedule(Base):
 
     user = relationship("User", back_populates="medication_schedules")
     medication = relationship("Medication", back_populates="medication_schedules")
+    medication_histories = relationship("MedicationHistory", back_populates="medication_schedules")
 
 class MedicationHistory(Base):
     __tablename__ = "medication_history"
@@ -40,6 +41,9 @@ class MedicationHistory(Base):
     medication_id = Column(Integer, ForeignKey("medication.id"), nullable=False, comment="약 ID")
     dosage_mg = Column(String, nullable=False, comment="복용 용량")
     taken_at = Column(DateTime, default=func.now(), comment="복용 시각")  # 복용한 시간 (자동 입력)
+    scheduled_time = Column(DateTime, ForeignKey("medication_schedule.id"),  nullable=False, comment="복용 예정 시간")
+
 
     user = relationship("User", back_populates="medication_histories")
     medication = relationship("Medication", back_populates="medication_histories")
+    medication_schedules = relationship("MedicationSchedule", back_populates="medication_histories")
