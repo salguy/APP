@@ -44,5 +44,5 @@ class MedicationRecordCreate(BaseModel):
     @field_validator("taken_at")
     def validate_taken_at(cls, value):
         if value > datetime.now():
-            raise ValueError("taken_at은 현재 시각보다 과거여야 합니다.")
+            raise ValueError(f"taken_at은 현재 시각보다 과거여야 합니다., 현재 시각: {datetime.now()}")
         return value  # 검증 통과 시 그대로 반환
