@@ -9,8 +9,8 @@ tags_metadata = [
         "description": "회원 기능",
     },
     {
-        "name": "medicineInfo",
-        "description": "복약 정보",
+        "name": "medications",
+        "description": "약 정보",
     }
 ]
 

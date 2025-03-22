@@ -1,28 +1,28 @@
 from sqlalchemy.orm import Session
-from models import MedicationHistory, MedicationSchedule
+from models import *
 
 from domain.user.schema import *
 
 
-def create_medication_record(db: Session, record: MedicationRecordCreate):
+def fill_taken_at(db: Session, record: MedicationRecordCreate):
     
-    # 2. MedicationSchedule 저장
-    schedule = MedicationSchedule(
-        user_id=record.user_id,
-        medication_id=record.medication_id,
-        taken_at = record.taken_at, # 예정된 복용 시각
-        schedule_id=record.schedule_id,  
-        dosage_mg=record.dosage_mg  # 복용 용량
-    )
-    db.add(schedule)
+    # 해당 스케줄을 조회
+    schedule = db.query(MedicationSchedule).filter(MedicationSchedule.id == record.schedule_id).first()
+    if schedule is None:
+        raise ValueError(f"조건 (schedule_id: {record.schedule_id})에 맞는 스케줄을 찾을 수 없습니다.")
 
-    db.commit()  # 트랜잭션 커밋
-    db.refresh(schedule)  # 일정도 새로 고침
+    # 이미 값이 채워져 있다면 업데이트하지 않거나, 경고를 줄 수 있음
+    if schedule.taken_at is not None:
+        raise ValueError(f"taken_at이 이미 채워져 있습니다.")
 
-    return {"user_id": record.user_id, "schedule_id": schedule.id}  # 기록과 일정 ID 반환
+    # taken_at 값 업데이트
+    schedule.taken_at = record.taken_at
+    db.commit()
+    db.refresh(schedule)
+    return {"schedule_id": schedule.id, "taken_at": schedule.taken_at}
 
 
-def get_medication_record(db: Session, record: MedicationRecordGet):
+def get_medication_history(db: Session, record: MedicationRecordGet):
     
     # 특정 유저(user_id)와 스케줄(schedule_id)에 맞는 복약 이력을 조회
     medication_records = db.query(MedicationSchedule).all()
@@ -31,3 +31,17 @@ def get_medication_record(db: Session, record: MedicationRecordGet):
         raise ValueError(f"해당 조건(user_id={record.user_id}) 에 맞는 복약 정보를 찾을 수 없습니다.")
 
     return {"medication record": medication_records}
+
+
+def submit_medication_schedule(db: Session, user_id, record: MedicationScheduleCreate):
+    
+    schedule = MedicationSchedule(
+        user_id = user_id,
+        medication_id = record.medication_id,
+        dosage_mg = record.dosage_mg,
+        scheduled_time = record.scheduled_time        
+    )
+    db.add(schedule)
+    db.commit()
+    db.refresh(schedule)
+    return f"schedule 추가 완료! id: {schedule.id}"

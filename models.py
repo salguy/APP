@@ -26,7 +26,7 @@ class MedicationSchedule(Base):
     medication_id = Column(Integer, ForeignKey("medication.id"), nullable=False, comment="약 ID")
     dosage_mg = Column(String, nullable=False, comment="복용 용량")
     scheduled_time = Column(DateTime, nullable=False, comment="복용 예정 시간")
-    taken_at = Column(DateTime, nullable=True, comment="복용 시각")  # 복용한 시간 (자동 입력)
+    taken_at = Column(DateTime, nullable=True, comment="복용 시각")
 
     user = relationship("User", back_populates="medication_schedules")
     medication = relationship("Medication", back_populates="medication_schedules")
