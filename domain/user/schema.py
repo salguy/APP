@@ -8,7 +8,7 @@ class MedicationRecordCreate(BaseModel):
     user_id: int
     medication_id: int
     taken_at: str  # 실제 복용 시각
-    scheduled_id: int 
+    schedule_id: int 
     dosage_mg: int
     
     
@@ -31,6 +31,16 @@ class MedicationRecordCreate(BaseModel):
 
         if not pill:
             raise ValueError(f"존재하지 않는 medication_id: {value}")
+        return value
+    
+    @field_validator("schedule_id")
+    def validate_schedule_exists(cls, value):
+        db: Session = get_db()  # DB 세션 가져오기
+        pill = db.query(MedicationSchedule).filter(MedicationSchedule.id == value).first()
+        db.close()  # 세션 닫기
+
+        if not pill:
+            raise ValueError(f"존재하지 않는 schedule_id: {value}")
         return value
     
  # 날짜 형식 검증 (YY:MM:DD:HH:MM)

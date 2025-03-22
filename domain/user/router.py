@@ -9,7 +9,7 @@ router = APIRouter()
 @router.post("/api/user/histories", summary="복약 정보 저장")
 async def add_medication_records(record: MedicationRecordCreate, db: Session = Depends(get_db)):
     """
-    특정 유저의 복약 정보를 저장하는 엔드포인트입니다.
+    특정 유저의 복약 기록을 저장하는 엔드포인트입니다.
     - **user_id**:          int, 유저 고유 번호(현재 1만 가능)
     - **medication_id**:    int, 약 고유 번호(현재 1만 가능)
     - **taken_at**:         str, 실제 복용 시각(yy.mm.dd.hh.mm)
