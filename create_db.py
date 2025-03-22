@@ -1,5 +1,5 @@
 from database import Base, engine
-from models import User, Medication, MedicationHistory, MedicationSchedule  # ORM 모델 로드
+from models import *  # ORM 모델 로드
 
 
 print("테이블 생성 중...")
