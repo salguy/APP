@@ -18,16 +18,6 @@ db.add(medication)
 db.commit()
 db.refresh(medication)
 
-# 3️⃣ 복용 기록 추가
-med_history = MedicationHistory(
-    user_id=user.id,
-    medication_id=medication.id,
-    dosage_mg="500",
-    taken_at=datetime(2025, 3, 12, 8, 0),  # 2025년 3월 11일 08:00
-    scheduled_time=datetime(2025, 3, 12, 8, 30)
-)
-db.add(med_history)
-db.commit()
 
 # 4️⃣ 복용 일정 추가
 med_schedule = MedicationSchedule(
@@ -38,6 +28,18 @@ med_schedule = MedicationSchedule(
 )
 db.add(med_schedule)
 db.commit()
+
+# 3️⃣ 복용 기록 추가
+med_history = MedicationHistory(
+    user_id=user.id,
+    medication_id=medication.id,
+    dosage_mg="500",
+    taken_at=datetime(2025, 3, 12, 8, 0),  # 2025년 3월 11일 08:00
+    medication_schedule_id=med_schedule.id
+)
+db.add(med_history)
+db.commit()
+
 
 print("샘플 데이터 추가 완료!")
 
