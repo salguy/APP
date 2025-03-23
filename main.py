@@ -31,16 +31,9 @@ app.add_middleware(
 )
 
 
-<<<<<<< HEAD
-app.include_router(medicineInfoRouter.router, tags=["medicineInfo"])
-
-
-if __name__ == '__main__':
-=======
 app.include_router(userRouter.router, tags=["users"])
 app.include_router(medicationRouter.router, tags=["medications"])
 
 if __name__ == "__main__":
->>>>>>> develop
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000)
