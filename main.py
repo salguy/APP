@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-from domain.medicineInfo import router as medicineInfoRouter
+from domain.user import router as userRouter
+from domain.medications import router as medicationRouter
 
 tags_metadata = [
     {
@@ -8,8 +9,8 @@ tags_metadata = [
         "description": "회원 기능",
     },
     {
-        "name": "medicineInfo",
-        "description": "복약 정보",
+        "name": "medications",
+        "description": "약 정보",
     }
 ]
 
@@ -30,9 +31,16 @@ app.add_middleware(
 )
 
 
+<<<<<<< HEAD
 app.include_router(medicineInfoRouter.router, tags=["medicineInfo"])
 
 
 if __name__ == '__main__':
+=======
+app.include_router(userRouter.router, tags=["users"])
+app.include_router(medicationRouter.router, tags=["medications"])
+
+if __name__ == "__main__":
+>>>>>>> develop
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000)
