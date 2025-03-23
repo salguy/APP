@@ -6,7 +6,7 @@ from domain.user.schema import *
 
 router = APIRouter()
 
-@router.post("/api/user/histories", summary="복약 시각 저장")
+@router.put("/api/user/histories", summary="복약 시각 저장")
 async def add_medication_history(record: MedicationRecordCreate, db: Session = Depends(get_db)):
     """
     특정 유저의 복약 기록을 저장하는 엔드포인트입니다.
@@ -35,8 +35,8 @@ async def get_medication_histories(user_id: int, db: Session = Depends(get_db)):
 
 #POST /api/users/{user_id}/schedules : 새로운 복약 스케줄 생성
 
-@router.post("/api/users/{user_id}/schedules", summary="복약 일정 저장")
-async def add_medication_records(user_id: int, record: MedicationScheduleCreate, db: Session = Depends(get_db)):
+@router.post("/api/users/schedules", summary="복약 일정 저장")
+async def add_medication_records(record: MedicationScheduleCreate, db: Session = Depends(get_db)):
     """
     특정 유저의 복약 기록을 저장하는 엔드포인트입니다.
     - **user_id**:          int, 유저 고유 번호(현재 1만 가능)
@@ -46,7 +46,14 @@ async def add_medication_records(user_id: int, record: MedicationScheduleCreate,
     - **dosage_mg**:        int, 복용 용량(mg)
     """
     try:
-        return submit_medication_schedule(db, user_id, record)
+        return submit_medication_schedule(db, record)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     
+    
+@router.get("/api/users", summary="전체 유저 목록")
+async def search_users(db: Session = Depends(get_db)):
+    try:
+        return search_all_users(db)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))

@@ -48,17 +48,27 @@ class MedicationRecordGet(BaseModel):
     
     
 class MedicationScheduleCreate(BaseModel):
+    user_id: int
     medication_id: int
     dosage_mg: int
     scheduled_time: str
     
-    @field_validator("medication_id")
+    @field_validator("user_id")
     def validate_user_exists(cls, value):
         with get_db() as db:
             user_exists = db.query(User).filter(User.id == value).scalar() is not None
 
         if not user_exists:
             raise ValueError(f"존재하지 않는 user_id: {value}")  # ✅ ValueError 사용
+        return value
+    
+    @field_validator("medication_id")
+    def validate_medication_exists(cls, value):
+        with get_db() as db:
+            pills_exists = db.query(Medication).filter(Medication.id == value).scalar() is not None
+
+        if not pills_exists:
+            raise ValueError(f"존재하지 않는 medication_id: {value}")  # ✅ ValueError 사용
         return value
     
     @field_validator("scheduled_time")

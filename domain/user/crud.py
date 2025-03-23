@@ -33,10 +33,10 @@ def get_medication_history(db: Session, record: MedicationRecordGet):
     return {"medication record": medication_records}
 
 
-def submit_medication_schedule(db: Session, user_id, record: MedicationScheduleCreate):
+def submit_medication_schedule(db: Session, record: MedicationScheduleCreate):
     
     schedule = MedicationSchedule(
-        user_id = user_id,
+        user_id = record.user_id,
         medication_id = record.medication_id,
         dosage_mg = record.dosage_mg,
         scheduled_time = record.scheduled_time        
@@ -45,3 +45,11 @@ def submit_medication_schedule(db: Session, user_id, record: MedicationScheduleC
     db.commit()
     db.refresh(schedule)
     return f"schedule 추가 완료! id: {schedule.id}"
+
+def search_all_users(db: Session):
+    users_list = db.query(User).all()
+
+    if not users_list:
+        raise ValueError(f"등록된 유저가 없습니다.")
+
+    return {"users_list": users_list}
