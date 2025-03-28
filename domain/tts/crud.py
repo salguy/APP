@@ -2,7 +2,7 @@ from models import *
 from domain.stt.stt import voice_to_text
 from fastapi.responses import JSONResponse
 
-from domain.stt.schema import *
+from domain.tts.schema import *
 
 
 def speech_to_text(content):
