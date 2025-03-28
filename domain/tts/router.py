@@ -7,7 +7,7 @@ import os
 
 router = APIRouter()
 
-@app.post("/api/tts", summary="텍스트를 음성으로 변환하여 파일 반환")
+@router.post("/api/tts", summary="텍스트를 음성으로 변환하여 파일 반환")
 async def process_tts(input_data: TextInput):
     """
     입력받은 텍스트를 음성파일로 반환하는 엔드포인트입니다.

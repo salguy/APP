@@ -3,6 +3,8 @@ from starlette.middleware.cors import CORSMiddleware
 from domain.user import router as userRouter
 from domain.medications import router as medicationRouter
 from domain.stt import router as sttrouter
+from domain.tts import router as ttsrouter
+
 tags_metadata = [
     {
         "name": "users",
@@ -34,6 +36,8 @@ app.add_middleware(
 app.include_router(userRouter.router, tags=["users"])
 app.include_router(medicationRouter.router, tags=["medications"])
 app.include_router(sttrouter.router, tags=["stt"])
+app.include_router(ttsrouter.router, tags=["tts"])
+
 
 
 if __name__ == "__main__":
