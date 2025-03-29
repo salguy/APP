@@ -4,3 +4,8 @@ from models import *
 
 class MedicationAdd(BaseModel):
     medication_name: str
+    
+    
+class MedicationDelete(BaseModel):
+    medication_id: int
+    

@@ -19,3 +19,15 @@ def add_pills(db:Session, record: MedicationAdd):
     db.commit()
     db.refresh(medication)
     return f"medication 추가 완료! id: {medication.id}, name: {medication.name}"
+
+
+def delete_pills(db: Session, record: MedicationDelete):
+    pills=db.query(Medication).filter(Medication.id == record.medication_id).first()
+    if not pills:
+        raise ValueError(f"Medication (id: {record.medication_id}) not found")
+    
+    # 사용자 삭제
+    db.delete(pills)
+    db.commit()
+    
+    return {"message": f"Medication deleted successfully, id: {record.medication_id}"}
