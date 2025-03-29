@@ -62,3 +62,15 @@ def add_user(db : Session, record: UserAdd):
     db.commit()
     db.refresh(user)
     return f"schedule 추가 완료! id: {user.id}, name: {user.name}"
+
+
+def delete_user(db: Session, record: UserDelete):
+    user=db.query(User).filter(User.id == record.user_id).first()
+    if not user:
+        raise ValueError(f"User (id: {record.user_id}) not found")
+    
+    # 사용자 삭제
+    db.delete(user)
+    db.commit()
+    
+    return {"message": f"User deleted successfully, id: {record.user_id}"}

@@ -81,3 +81,6 @@ class MedicationScheduleCreate(BaseModel):
 
 class UserAdd(BaseModel):
     user_name: str
+    
+class UserDelete(BaseModel):
+    user_id: int

@@ -64,3 +64,10 @@ async def add_users(record: UserAdd, db: Session = Depends(get_db)):
         return add_user(db, record)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    
+@router.delete("/api/users", summary="유저 삭제")
+async def delete_users(record: UserDelete, db: Session = Depends(get_db)):
+    try:
+        return delete_user(db, record)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
