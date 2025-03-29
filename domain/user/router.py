@@ -59,8 +59,8 @@ async def search_users(db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=str(e))
     
 @router.post("/api/users", summary="유저 추가")
-async def add_users(db: Session = Depends(get_db)):
+async def add_users(record: UserAdd, db: Session = Depends(get_db)):
     try:
-        return add_users(db)
+        return add_user(db, record)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

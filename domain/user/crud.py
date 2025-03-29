@@ -54,7 +54,7 @@ def search_all_users(db: Session):
 
     return {"users_list": users_list}
 
-def add_users(db : Session, record: UserAdd):
+def add_user(db : Session, record: UserAdd):
     user = User(
         name=record.user_name      
     )
