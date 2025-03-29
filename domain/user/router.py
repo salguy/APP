@@ -33,7 +33,7 @@ async def get_medication_histories(user_id: int, db: Session = Depends(get_db)):
     
 
 
-#POST /api/users/{user_id}/schedules : 새로운 복약 스케줄 생성
+#POST /api/users/schedules : 새로운 복약 스케줄 생성
 
 @router.post("/api/users/schedules", summary="복약 일정 저장")
 async def add_medication_records(record: MedicationScheduleCreate, db: Session = Depends(get_db)):
@@ -55,5 +55,12 @@ async def add_medication_records(record: MedicationScheduleCreate, db: Session =
 async def search_users(db: Session = Depends(get_db)):
     try:
         return search_all_users(db)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+@router.post("/api/users", summary="유저 추가")
+async def add_users(db: Session = Depends(get_db)):
+    try:
+        return add_users(db)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
