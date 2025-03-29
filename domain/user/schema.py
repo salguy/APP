@@ -77,3 +77,7 @@ class MedicationScheduleCreate(BaseModel):
             return datetime.strptime(value, "%y.%m.%d.%H.%M")  # YY:MM:DD:HH:MM 형식 체크
         except ValueError:
             raise ValueError(f"날짜 형식이 올바르지 않습니다: {value} , (YY.MM.DD.HH.MM 형식이어야 함)")
+        
+
+class UserAdd(BaseModel):
+    user_name: str

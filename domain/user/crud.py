@@ -53,3 +53,12 @@ def search_all_users(db: Session):
         raise ValueError(f"등록된 유저가 없습니다.")
 
     return {"users_list": users_list}
+
+def add_users(db : Session, record: UserAdd):
+    user = User(
+        name=record.user_name      
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return f"schedule 추가 완료! id: {user.id}, name: {user.name}"
