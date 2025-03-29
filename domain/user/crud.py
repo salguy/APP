@@ -53,3 +53,24 @@ def search_all_users(db: Session):
         raise ValueError(f"등록된 유저가 없습니다.")
 
     return {"users_list": users_list}
+
+def add_user(db : Session, record: UserAdd):
+    user = User(
+        name=record.user_name      
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return f"schedule 추가 완료! id: {user.id}, name: {user.name}"
+
+
+def delete_user(db: Session, record: UserDelete):
+    user=db.query(User).filter(User.id == record.user_id).first()
+    if not user:
+        raise ValueError(f"User (id: {record.user_id}) not found")
+    
+    # 사용자 삭제
+    db.delete(user)
+    db.commit()
+    
+    return {"message": f"User deleted successfully, id: {record.user_id}"}
