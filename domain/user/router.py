@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 from domain.user.crud import *
 from domain.user.schema import *
-import datetime
+from datetime import datetime
 router = APIRouter()
 @router.put("/api/user/histories", summary="복약 시각 저장")
 async def add_medication_history(record: MedicationRecordCreate, db: Session = Depends(get_db)):
