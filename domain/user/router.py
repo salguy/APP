@@ -52,7 +52,7 @@ async def add_medication_records(record: MedicationScheduleCreate, db: Session =
             raise ValueError(f"존재하지 않는 medication_id: {record.medication_id}")
 
         try:
-            datetime.strptime(record.scheduled_time, "%y.%m.%d.%H.%M")
+            record.scheduled_time = datetime.strptime(record.scheduled_time, "%y.%m.%d.%H.%M")
         except ValueError:
             raise ValueError(f"날짜 형식이 올바르지 않습니다: {record.scheduled_time} , (YY.MM.DD.HH.MM 형식이어야 함)")
 
