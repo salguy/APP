@@ -1,12 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, APIRouter, UploadFile, File
-from sqlalchemy.orm import Session
-from database import get_db
+from fastapi import APIRouter, HTTPException, APIRouter, UploadFile, File
 from domain.stt.crud import *
 from domain.stt.schema import *
-from fastapi.responses import JSONResponse
+
 router = APIRouter()
 
-@router.post("/api/stt", summary="음성 데이터 STT 처리")
+@router.post("/api/stt", summary="음성 데이터 STT 처리 후 반환")
 async def process_stt(audio: UploadFile = File(...)):
     # 업로드된 파일의 데이터 읽기
     try:
@@ -14,5 +12,4 @@ async def process_stt(audio: UploadFile = File(...)):
         return speech_to_text(contents)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    
     
