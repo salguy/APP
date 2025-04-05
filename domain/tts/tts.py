@@ -18,7 +18,7 @@ def get_llm_out(text):
 #        return "An error occurred during the request"
 	return "llm 답변 예시입니다."
 
-def text_to_voice(text: str, filename: str = "./tts.mp3") -> str:
+def text_to_voice(text: str, filename: str = "./static/tts.mp3") -> str:
     try:
         print("Converting text to speech...")
         tts = gTTS(text=text, lang='ko')

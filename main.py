@@ -1,9 +1,13 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+
 from starlette.middleware.cors import CORSMiddleware
 from domain.user import router as userRouter
 from domain.medications import router as medicationRouter
 from domain.stt import router as sttrouter
 from domain.tts import router as ttsrouter
+from domain.test import router as testrouter
+
 
 tags_metadata = [
     {
@@ -20,8 +24,11 @@ app = FastAPI(
     openapi_tags=tags_metadata
 )
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
 origins = [
-    "http://localhost:3000",
+    "http://localhost:8000",
 ]
 
 app.add_middleware(
@@ -37,6 +44,7 @@ app.include_router(userRouter.router, tags=["users"])
 app.include_router(medicationRouter.router, tags=["medications"])
 app.include_router(sttrouter.router, tags=["stt"])
 app.include_router(ttsrouter.router, tags=["tts"])
+app.include_router(testrouter.router, tags=["test"])
 
 
 
