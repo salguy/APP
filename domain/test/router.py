@@ -24,12 +24,19 @@ async def testapi( request: Request, audio: UploadFile = File(...), record: Sche
             raise HTTPException(status_code=404, detail=f"존재하지 않는 scheduleId: {record.scheduleId}")
         contents = await audio.read()
         text = speech_to_text(contents)
+        print("📦 보내는 텍스트:", text)
+        print("📦 보내는 스케줄 ID:", record.scheduleId)
+
+
         url = AI_URL+"/api/inferences"
         # data = {"input_text": text}
         data = {"input_text": text, "scheduleId": record.scheduleId}
         headers = {"Content-Type": "application/json"}
         print("data: ", data)
         res = requests.post(url, json=data, headers=headers)
+        print("🔁 AI서버 응답 상태코드:", res.status_code)
+        print("📦 AI서버 응답 내용:", res.text)
+
         print("response: ", res.json())
         if "json" not in res.json()["model_output"] or "response" not in res.json()["model_output"]:
             raise HTTPException(status_code=500, detail="AI 서버 응답 형식 오류")
