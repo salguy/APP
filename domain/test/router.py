@@ -27,8 +27,9 @@ async def testapi( request: Request, audio: UploadFile = File(...), record: Sche
         url = AI_URL+"/api/inferences"
         # data = {"input_text": text}
         data = {"input_text": text, "scheduleId": record.scheduleId}
+        headers = {"Content-Type": "application/json"}
         print("data: ", data)
-        res = requests.post(url, json=data)
+        res = requests.post(url, json=data, headers=headers)
         print("response: ", res.json())
         if "json" not in res.json()["model_output"] or "response" not in res.json()["model_output"]:
             raise HTTPException(status_code=500, detail="AI 서버 응답 형식 오류")
