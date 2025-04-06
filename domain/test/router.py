@@ -31,13 +31,13 @@ async def testapi( request: Request, audio: UploadFile = File(...), record: Sche
         url = AI_URL+"/api/inferences"
         # data = {"input_text": text}
         data = {"input_text": text, "scheduleId": record.scheduleId}
-        payload = json.dumps(data, ensure_ascii=False)
+        payload = json.dumps(data, ensure_ascii=False).encode("utf-8")
         print("📦 전송 전 payload:", payload)
 
         res = requests.post(
             url,
             data=payload,  # ← json=대신 data=에 직접 직렬화된 JSON
-            headers={"Content-Type": "application/json"}
+            headers={"Content-Type": "application/json; charset=utf-8"}
         )
         print("data: ", data)
         print("🔁 AI서버 응답 상태코드:", res.status_code)
