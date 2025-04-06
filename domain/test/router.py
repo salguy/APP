@@ -8,7 +8,7 @@ import requests
 from domain.tts.tts import text_to_voice
 import os
 from dotenv import load_dotenv
-
+import json
 
 router = APIRouter()
 load_dotenv()  # .env 파일 로드
@@ -31,9 +31,15 @@ async def testapi( request: Request, audio: UploadFile = File(...), record: Sche
         url = AI_URL+"/api/inferences"
         # data = {"input_text": text}
         data = {"input_text": text, "scheduleId": record.scheduleId}
-        headers = {"Content-Type": "application/json"}
+        payload = json.dumps(data, ensure_ascii=False)
+        print("📦 전송 전 payload:", payload)
+
+        res = requests.post(
+            url,
+            data=payload,  # ← json=대신 data=에 직접 직렬화된 JSON
+            headers={"Content-Type": "application/json"}
+        )
         print("data: ", data)
-        res = requests.post(url, json=data, headers=headers)
         print("🔁 AI서버 응답 상태코드:", res.status_code)
         print("📦 AI서버 응답 내용:", res.text)
 
