@@ -26,7 +26,7 @@ async def testapi( request: Request, audio: UploadFile = File(...), record: Sche
         text = speech_to_text(contents)
         url = AI_URL+"/api/inferences"
         # data = {"input_text": text}
-        data = {"input_text": text, "scheduleID": record.scheduleId}
+        data = {"input_text": text, "scheduleId": record.scheduleId}
         print("data: ", data)
         res = requests.post(url, json=data)
         print("response: ", res.json())
