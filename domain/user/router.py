@@ -15,11 +15,11 @@ async def add_medication_history(record: MedicationRecordCreate, db: Session = D
 
         # 날짜 포맷 검증
         try:
-            taken_at = datetime.strptime(record.taken_at, "%y.%m.%d.%H.%M")
+            record.taken_at = datetime.strptime(record.taken_at, "%y.%m.%d.%H.%M")
         except ValueError:
             raise ValueError(f"날짜 형식이 올바르지 않습니다: {record.taken_at} , (YY.MM.DD.HH.MM 형식이어야 함)")
 
-        if taken_at > datetime.now():
+        if record.taken_at > datetime.now():
             raise ValueError("taken_at은 현재 시각보다 과거여야 합니다.")
 
         return fill_taken_at(db, record)
