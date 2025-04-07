@@ -12,7 +12,7 @@ router = APIRouter()
 async def testapi( request: Request, audio: UploadFile = File(...), record: ScheduleID = Depends(), db: Session = Depends(get_db)):
     # 업로드된 파일의 데이터 읽기
     try:
-        return testapi_logic(request, db, record, audio)
+        return await testapi_logic(request, db, record, audio)
 
         
         
