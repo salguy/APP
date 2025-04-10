@@ -11,9 +11,16 @@ def voice_to_text(content):
     audio_file = sr.AudioFile(io.BytesIO(content))
     with audio_file as source:
         audio = r.record(source)
-    recognized_text = r.recognize_google(audio, language='ko-KR')
-    print(f"Recognized text: {recognized_text}")
-    return recognized_text
+    try:
+        recognized_text = r.recognize_google(audio, language='ko-KR')
+        print(f"Recognized text: {recognized_text}")
+        return recognized_text
+    except sr.UnknownValueError:
+        print("❌ 음성을 인식하지 못했습니다.")
+        return None
+    except sr.RequestError as e:
+        print(f"❌ Google STT API 요청 오류: {e}")
+        return None
 
 
 def speech_to_text(content):

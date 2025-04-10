@@ -30,10 +30,9 @@ async def testapi_logic( request: Request, db: Session, record: ScheduleID, audi
         raise HTTPException(status_code=404, detail=f"존재하지 않는 scheduleId: {record.scheduleId}")
     contents = await audio.read()
     text = speech_to_text(contents)
-    print("📦 보내는 텍스트:", text)
-    print("📦 보내는 스케줄 ID:", record.scheduleId)
+    # print("📦 보내는 텍스트:", text)
+    # print("📦 보내는 스케줄 ID:", record.scheduleId)
     url = AI_URL+"/api/inferences"
-    # data = {"input_text": text}
     data = {"input_text": text, "scheduleId": record.scheduleId}
     payload = json.dumps(data, ensure_ascii=False).encode("utf-8")
     # print("📦 전송 전 payload:", payload)
