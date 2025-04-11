@@ -27,7 +27,9 @@ def speech_to_text(content):
 async def testapi_logic( request: Request, db: Session, record: ScheduleID, audio: UploadFile):
     schedule = db.query(MedicationSchedule).filter(MedicationSchedule.id == record.scheduleId).first()
     if not schedule:
-        raise HTTPException(status_code=404, detail=f"존재하지 않는 scheduleId: {record.scheduleId}")
+        if record.scheduleId != -1:
+            raise HTTPException(status_code=404, detail=f"존재하지 않는 scheduleId: {record.scheduleId}")
+
     contents = await audio.read()
     text = speech_to_text(contents)
     # print("📦 보내는 텍스트:", text)
