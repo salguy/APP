@@ -55,15 +55,16 @@ async def testapi_logic( request: Request, db: Session, record: ScheduleID, audi
     response_text = model_output["response"]
     med_time = res_data.get("med_time")
     
-    if med_time:
-        try:
-            updated = update_taken_at_if_empty(db, schedule.id, med_time)
-            if updated:
-                print(f"✅ 복약 스케줄(id: {schedule.id}의 taken_at을 업데이트했습니다: {med_time}")
-            else:
-                print("⏩ 이미 taken_at이 존재합니다. 업데이트 생략")
-        except ValueError as e:
-            print(f"❌ 복약 시각 저장 실패: {str(e)}", "error")
+    if record.scheduleId != -1:
+        if med_time:
+            try:
+                updated = update_taken_at_if_empty(db, schedule.id, med_time)
+                if updated:
+                    print(f"✅ 복약 스케줄(id: {schedule.id}의 taken_at을 업데이트했습니다: {med_time}")
+                else:
+                    print("⏩ 이미 taken_at이 존재합니다. 업데이트 생략")
+            except ValueError as e:
+                print(f"❌ 복약 시각 저장 실패: {str(e)}", "error")
         
     filename = text_to_voice(response_text)
     
