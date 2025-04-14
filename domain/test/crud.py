@@ -84,6 +84,7 @@ async def first_test( request: Request, db: Session, record: ScheduleID, audio: 
 def update_taken_at_if_empty(db: Session, schedule_id: int, taken_at_str: str) -> bool:
     """
     복약 스케줄 ID에 해당하는 레코드의 taken_at이 비어 있을 경우에만 채워넣는다.
+    현재 시각보다 이전이어야 함
     
     Returns:
         bool: 실제로 업데이트되었으면 True, 아니면 False
@@ -96,10 +97,12 @@ def update_taken_at_if_empty(db: Session, schedule_id: int, taken_at_str: str) -
     # 2. taken_at이 이미 있으면 업데이트 생략
     if schedule.taken_at is not None:
         return False
-
+    
     # 3. 문자열을 datetime으로 변환
     try:
         taken_at_dt = datetime.strptime(taken_at_str, "%y.%m.%d.%H.%M")
+        if taken_at_dt > datetime.now():
+            raise ValueError("taken_at은 현재 시각보다 과거여야 합니다.")
     except ValueError:
         raise ValueError(f"날짜 형식 오류: {taken_at_str} (YY.MM.DD.HH.MM 이어야 함)")
 
