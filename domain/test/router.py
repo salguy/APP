@@ -13,9 +13,6 @@ async def testapi( request: Request, audio: UploadFile = File(...), record: Sche
     # 업로드된 파일의 데이터 읽기
     try:
         return await testapi_logic(request, db, record, audio)
-
-        
-        
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     

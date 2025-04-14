@@ -17,7 +17,7 @@ def voice_to_text(content):
         return recognized_text
     except sr.UnknownValueError:
         print("❌ 음성을 인식하지 못했습니다.")
-        return None
+        return "무응답"
     except sr.RequestError as e:
         print(f"❌ Google STT API 요청 오류: {e}")
         return None
