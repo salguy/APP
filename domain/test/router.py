@@ -32,8 +32,8 @@ async def testapi( request: Request, audio: UploadFile = File(...), record: Test
     Parameters:
         - audio: 음성 파일 (UploadFile)
         - record: TestSchema 객체
-            - scheduleId: int - 복약 스케줄 ID (-1인 경우 스케줄 검증 생략)
-            - responsetype: str - 응답 타입
+            - scheduleId: int : 복약 스케줄 ID (-1인 경우 스케줄 검증 생략)
+            - responsetype: str : 응답 타입
                 - check_meal: 복약 전 식사여부 체크
                 - induce_medicine: 복약 유도
                 - taking_medicine_time: 복약 시점 도달
