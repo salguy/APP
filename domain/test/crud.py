@@ -35,7 +35,7 @@ async def first_test( request: Request, db: Session, record: ScheduleID, audio: 
     # print("📦 보내는 텍스트:", text)
     # print("📦 보내는 스케줄 ID:", record.scheduleId)
     url = AI_URL+"/api/inferences"
-    data = {"input_text": text, "scheduleId": record.scheduleId}
+    data = {"input_text": text}
     payload = json.dumps(data, ensure_ascii=False).encode("utf-8")
     # print("📦 전송 전 payload:", payload)
 
@@ -125,16 +125,11 @@ async def second_test( request: Request, db: Session, record: TestSchema, audio:
 
     contents = await audio.read()
     text = speech_to_text(contents)
-    # print("📦 보내는 텍스트:", text)
-    # print("📦 보내는 스케줄 ID:", record.scheduleId)
-    url = AI_URL+"/api/inferences"
+    url = f"{AI_URL}/api/inference/{record.responsetype}"
     data = {
-        "input_text": text, 
-        "scheduleId": record.scheduleId,
-        "responsetype": record.responsetype
+        "input_text": text
     }
     payload = json.dumps(data, ensure_ascii=False).encode("utf-8")
-    # print("📦 전송 전 payload:", payload)
 
     res = requests.post(
         url,
