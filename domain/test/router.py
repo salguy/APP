@@ -27,26 +27,26 @@ async def testapi( request: Request, audio: UploadFile = File(...), record: Sche
 @router.post("/api/test2", summary="2차 통합 테스트")
 async def testapi( request: Request, audio: UploadFile = File(...), record: TestSchema = Depends(), db: Session = Depends(get_db)):
     """
-    2차 통합 테스트 API
+    2차 통합 테스트 API\n
     
-    Parameters:
-        - audio: 음성 파일 (UploadFile)
-        - record: TestSchema 객체
-            - scheduleId: int : 복약 스케줄 ID (-1인 경우 스케줄 검증 생략)
-            - responsetype: str : 응답 타입
-                - check_meal: 복약 전 식사여부 체크
-                - induce_medicine: 복약 유도
-                - taking_medicine_time: 복약 시점 도달
-                - check_medicine: 복용 완료 확인
+    Parameters:\n
+        - audio: 음성 파일 (UploadFile)\n
+        - record: TestSchema 객체\n 
+            - scheduleId: int : 복약 스케줄 ID (-1인 경우 스케줄 검증 생략)\n
+            - responsetype: str : 응답 타입\n
+                - check_meal: 복약 전 식사여부 체크\n
+                - induce_medicine: 복약 유도\n
+                - taking_medicine_time: 복약 시점 도달\n
+                - check_medicine: 복용 완료 확인\n
                 
-    Returns:
-        - message: AI 서버의 응답 메시지    
-        - file_url: 생성된 음성 파일의 URL
+    Returns:\n
+        - message: AI 서버의 응답 메시지    \n
+        - file_url: 생성된 음성 파일의 URL\n
     
-    Raises:
-        - HTTPException(400): 잘못된 입력값
-        - HTTPException(404): 존재하지 않는 스케줄 ID   
-        - HTTPException(500): 서버 내부 오류
+    Raises:\n
+        - HTTPException(400): 잘못된 입력값\n
+        - HTTPException(404): 존재하지 않는 스케줄 ID   \n
+        - HTTPException(500): 서버 내부 오류\n
     """
     try:
         return await second_test(request, db, record, audio)
