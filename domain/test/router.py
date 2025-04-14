@@ -40,12 +40,12 @@ async def testapi( request: Request, audio: UploadFile = File(...), record: Test
                 - check_medicine: 복용 완료 확인
                 
     Returns:
-        - message: AI 서버의 응답 메시지
+        - message: AI 서버의 응답 메시지    
         - file_url: 생성된 음성 파일의 URL
     
     Raises:
         - HTTPException(400): 잘못된 입력값
-        - HTTPException(404): 존재하지 않는 스케줄 ID
+        - HTTPException(404): 존재하지 않는 스케줄 ID   
         - HTTPException(500): 서버 내부 오류
     """
     try:
