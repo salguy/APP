@@ -139,7 +139,7 @@ async def second_test( request: Request, db: Session, record: TestSchema, audio:
     print("data: ", data)
     print("🔁 AI서버 응답 상태코드:", res.status_code)
     print("📦 AI서버 응답 내용:", res.text)
-    if "json" not in res.json()["model_output"] or "response" not in res.json()["model_output"]:
+    if "model_output" not in res.json() or "json" not in res.json()["model_output"] or "response" not in res.json()["model_output"]:
             raise ValueError("AI 서버 응답 형식 오류")
     # 텍스트를 음성으로 변환하여 파일 생성
     res_data = res.json()
