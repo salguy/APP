@@ -155,6 +155,10 @@ async def second_test(request: Request, db: Session, record: TestSchema, audio: 
     schedule = db.query(MedicationSchedule).filter(MedicationSchedule.id == record.scheduleId).first()
     if not schedule and record.scheduleId != -1:
         raise TestInputError(f"존재하지 않는 scheduleId: {record.scheduleId}")
+    user = db.query(User).filter(User.id == record.userId).first()
+
+    if not user:
+        raise TestInputError(f"존재하지 않는 userId: {record.userId}")
 
     try:
         contents = await audio.read()

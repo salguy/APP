@@ -9,21 +9,41 @@ import asyncio
 
 
 router = APIRouter()
-queue = asyncio.Queue()
+queues = {}
 
-@app.post("/api/wake")
-async def wake():
-    await queue.put("살가이가 듣는 중이에요...")
-    return {"message": "알림 전송 완료"}
 
-@app.get("/api/events")
-async def events(request: Request):
+async def send_message(user_id: int, message: str):
+    if user_id not in queues:
+        raise HTTPException(status_code=404, detail="User not found")
+    await queues[user_id].put(message)
+    
+@router.post("/api/wake")
+async def wake(user_id: int):
+    await send_message(user_id, "살가이가 듣는 중이에요...")
+    return {"message": "Wake 메시지 전송 완료"}
+
+@router.post("/api/speakend")
+async def speakend(user_id: int):
+    await send_message(user_id, "살가이가 생각하는 중이에요...")
+    return {"message": "Speakend 메시지 전송 완료"}
+
+@router.get("/api/events/{user_id}")
+async def events(request: Request, user_id: int):
+    if user_id not in queues:
+        queues[user_id] = asyncio.Queue()
+
     async def event_generator():
-        while True:
-            if await request.is_disconnected():
-                break
-            message = await queue.get()
-            yield f"data: {message}\n\n"
+        try:
+            while True:
+                if await request.is_disconnected():
+                    print(f"User {user_id} disconnected")
+                    break
+                message = await queues[user_id].get()
+                yield f"data: {message}\n\n"
+        finally:
+            print(f"Cleaning up for user {user_id}")
+            queues.pop(user_id, None)
+
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 
@@ -75,6 +95,7 @@ async def testapi2(
     Parameters:
         - audio: 음성 파일 (UploadFile)
         - record: TestSchema 객체
+            - userId: int : 유저 ID
             - scheduleId: int : 복약 스케줄 ID (-1인 경우 스케줄 검증 생략)
             - responsetype: str : 응답 타입
                 - check_meal: 복약 전 식사여부 체크
@@ -92,9 +113,20 @@ async def testapi2(
         - HTTPException(500): 서버 내부 오류
     """
     try:
-        return await second_test(request, db, record, audio)
+        # 여기서 먼저 "살가이가 생각하는 중이에요..." 문구 보내기
+        user_id = record.userId  # <- record 안에 user_id가 있어야 해 (없으면 수정 필요)
+        await send_message(user_id, "살가이가 생각하는 중이에요...")
+        
+        result = await second_test(request, db, record, audio)
+    
+         # ✅ 그 결과 중 message를 프론트에도 보내기
+        await send_message(user_id, result.message)
+
+        # ✅ 마지막으로 클라이언트에 반환
+        return result
+    
     except TestInputError as e:
-        if "존재하지 않는 scheduleId" in str(e):
+        if "존재하지 않는" in str(e):
             raise HTTPException(status_code=404, detail=str(e))
         raise HTTPException(status_code=400, detail=str(e))
     except TestProcessingError as e:
