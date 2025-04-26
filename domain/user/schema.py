@@ -15,8 +15,15 @@ class MedicationScheduleCreate(BaseModel):
     dosage_mg: int
     scheduled_time: str
 
-class UserAdd(BaseModel):
-    user_name: str
 
 class UserDelete(BaseModel):
     user_id: int
+    
+    
+class SignupRequest(BaseModel):
+    name: str
+    password: str
+    
+class LoginRequest(BaseModel):
+    user_id: str
+    password: str

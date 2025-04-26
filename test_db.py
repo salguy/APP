@@ -7,7 +7,7 @@ from datetime import datetime
 db: Session = SessionLocal()
 
 # 1️⃣ 사용자 추가
-user = User(name="홍길동")
+user = User(name="홍길동", password="1234")
 db.add(user)
 db.commit()
 db.refresh(user)  # id를 가져오기 위해 refresh

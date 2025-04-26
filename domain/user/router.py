@@ -4,7 +4,26 @@ from database import get_db
 from domain.user.crud import *
 from domain.user.schema import *
 from datetime import datetime
+from fastapi.security import OAuth2PasswordRequestForm
+
+
 router = APIRouter()
+
+
+@router.post("/api/user/signup")
+def signup(data: SignupRequest, db: Session = Depends(get_db)):
+
+    return signup_user(db, data)
+
+
+@router.post("/api/user/login")
+def login(data: LoginRequest, db: Session = Depends(get_db)):
+    try:
+        return login_user(db, data)
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=str(e))
+
+
 @router.put("/api/user/histories", summary="복약 시각 저장")
 async def add_medication_history(record: MedicationRecordCreate, db: Session = Depends(get_db)):
     try:
@@ -65,14 +84,6 @@ async def add_medication_records(record: MedicationScheduleCreate, db: Session =
 async def search_users(db: Session = Depends(get_db)):
     try:
         return search_all_users(db)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-
-@router.post("/api/users", summary="유저 추가")
-async def add_users(record: UserAdd, db: Session = Depends(get_db)):
-    try:
-        return add_user(db, record)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
