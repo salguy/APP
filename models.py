@@ -7,6 +7,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True, comment="고유번호")  # 고유번호
     name = Column(String, nullable=False, comment="사용자 이름")  # 이름
+    password = Column(String, nullable=False, comment="비밀번호")  # 비밀번호
     
     medication_schedules = relationship("MedicationSchedule", back_populates="user")
 

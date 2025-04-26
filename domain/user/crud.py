@@ -2,6 +2,36 @@ from sqlalchemy.orm import Session
 from models import *
 
 from domain.user.schema import *
+from passlib.context import CryptContext
+from jose import jwt
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def signup_user(db: Session, record: SignupRequest):
+    hashed = pwd_context.hash(record.password)
+    user = User(
+        name=record.name,
+        password=hashed
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return {"user_id": user.id, "message": "회원가입 완료"}
+
+def login_user(db: Session, record: LoginRequest):
+    user = db.query(User).filter(User.id == record.user_id).first()
+    if not user or not pwd_context.verify(record.password, user.password):
+        raise ValueError(f"존재하지 않는 ID 혹은 비밀번호가 일치하지 않습니다.")
+
+    token = jwt.encode({"user_id": record.user_id}, SECRET_KEY, algorithm=ALGORITHM)
+    return {"access_token": token, "token_type": "bearer"}
 
 
 def fill_taken_at(db: Session, record: MedicationRecordCreate):
@@ -54,14 +84,6 @@ def search_all_users(db: Session):
 
     return {"users_list": users_list}
 
-def add_user(db : Session, record: UserAdd):
-    user = User(
-        name=record.user_name      
-    )
-    db.add(user)
-    db.commit()
-    db.refresh(user)
-    return f"schedule 추가 완료! id: {user.id}, name: {user.name}"
 
 
 def delete_user(db: Session, record: UserDelete):
