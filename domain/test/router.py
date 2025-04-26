@@ -1,11 +1,31 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Request
+from fastapi.responses import StreamingResponse
+
 from sqlalchemy.orm import Session
 from database import get_db
 from domain.test.crud import *
 from domain.test.schema import *
-import os
+import asyncio
+
 
 router = APIRouter()
+queue = asyncio.Queue()
+
+@app.post("/api/wake")
+async def wake():
+    await queue.put("살가이가 듣는 중이에요...")
+    return {"message": "알림 전송 완료"}
+
+@app.get("/api/events")
+async def events(request: Request):
+    async def event_generator():
+        while True:
+            if await request.is_disconnected():
+                break
+            message = await queue.get()
+            yield f"data: {message}\n\n"
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
+
 
 @router.post("/api/test", summary="1차 통합 테스트", response_model=TestResponse)
 async def testapi(
