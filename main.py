@@ -29,7 +29,7 @@ app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__
 
 
 origins = [
-    "http://localhost:8000",
+    "*",
 ]
 
 app.add_middleware(
