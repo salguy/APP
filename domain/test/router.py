@@ -13,18 +13,18 @@ router = APIRouter()
 from domain.state import queues
 
 
-async def send_message(user_id: int, message: str):
+async def send_message(user_id: str, message: str):
     if user_id not in queues:
         raise HTTPException(status_code=404, detail="User not found")
     await queues[user_id].put(message)
     
 @router.post("/api/wake")
-async def wake(user_id: int):
+async def wake(user_id: str):
     await send_message(user_id, "살가이가 듣는 중이에요...")
     return {"message": "Wake 메시지 전송 완료"}
 
 @router.get("/api/events/{user_id}")
-async def events(request: Request, user_id: int):
+async def events(request: Request, user_id: str):
     if user_id not in queues:
         queues[user_id] = asyncio.Queue()
 
