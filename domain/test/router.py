@@ -10,7 +10,7 @@ import asyncio
 
 router = APIRouter()
 # queues = {}
-from domain.state import queues
+from state import queues
 
 
 async def send_message(user_id: str, message: str):
@@ -41,7 +41,9 @@ async def events(request: Request, user_id: str):
                 yield f"data: {message}\n\n"
         finally:
             print(f"Cleaning up for user {user_id}")
-            queues.pop(user_id, None)
+             # 큐 안에 남은 메시지가 없다면 삭제
+            if queues[user_id].empty():
+                queues.pop(user_id, None)
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 

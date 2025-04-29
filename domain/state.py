@@ -1,4 +1,4 @@
 # state.py
 import asyncio
 
-queues = {}
+queues: dict[str, asyncio.Queue] = {}
