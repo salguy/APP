@@ -20,14 +20,13 @@ def signup(data: SignupRequest, db: Session = Depends(get_db)):
 @router.post("/api/user/login")
 def login(data: LoginRequest, db: Session = Depends(get_db)):
     try:
+        user_id = data.user_id
         login_result = login_user(db, data)  # 여기서 토큰 발급
         if not login_result["access_token"]:
-            user_id = data.user_id   # 반환된 정보에서 user_id 추출
-
-        # ✅ 여기서 queues에 등록
-        if user_id not in queues:
-            queues[user_id] = asyncio.Queue()
-
+            # ✅ 여기서 queues에 등록
+            if user_id not in queues:
+                queues[user_id] = asyncio.Queue()
+                print(f"Login | user_id : {user_id} connected")
         return login_result
     except ValueError as e:
         raise HTTPException(status_code=401, detail=str(e))
