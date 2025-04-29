@@ -5,7 +5,7 @@ from domain.user.crud import *
 from domain.user.schema import *
 from datetime import datetime
 from fastapi.security import OAuth2PasswordRequestForm
-from state import queues
+from domain.state import queues
 import asyncio
 
 router = APIRouter()

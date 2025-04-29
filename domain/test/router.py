@@ -10,7 +10,7 @@ import asyncio
 
 router = APIRouter()
 # queues = {}
-from state import queues
+from domain.state import queues
 
 
 async def send_message(user_id: str, message: str):
