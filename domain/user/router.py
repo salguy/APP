@@ -5,7 +5,8 @@ from domain.user.crud import *
 from domain.user.schema import *
 from datetime import datetime
 from fastapi.security import OAuth2PasswordRequestForm
-
+from domain.state import queues
+import asyncio
 
 router = APIRouter()
 
@@ -19,7 +20,14 @@ def signup(data: SignupRequest, db: Session = Depends(get_db)):
 @router.post("/api/user/login")
 def login(data: LoginRequest, db: Session = Depends(get_db)):
     try:
-        return login_user(db, data)
+        login_result = login_user(db, data)  # 여기서 토큰 발급
+        user_id = login_result["user_id"]    # 반환된 정보에서 user_id 추출
+
+        # ✅ 여기서 queues에 등록
+        if user_id not in queues:
+            queues[user_id] = asyncio.Queue()
+
+        return login_result
     except ValueError as e:
         raise HTTPException(status_code=401, detail=str(e))
 

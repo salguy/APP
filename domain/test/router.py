@@ -9,7 +9,8 @@ import asyncio
 
 
 router = APIRouter()
-queues = {}
+# queues = {}
+from domain.state import queues
 
 
 async def send_message(user_id: int, message: str):
@@ -21,11 +22,6 @@ async def send_message(user_id: int, message: str):
 async def wake(user_id: int):
     await send_message(user_id, "살가이가 듣는 중이에요...")
     return {"message": "Wake 메시지 전송 완료"}
-
-@router.post("/api/speakend")
-async def speakend(user_id: int):
-    await send_message(user_id, "살가이가 생각하는 중이에요...")
-    return {"message": "Speakend 메시지 전송 완료"}
 
 @router.get("/api/events/{user_id}")
 async def events(request: Request, user_id: int):
