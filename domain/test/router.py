@@ -27,11 +27,12 @@ async def wake(user_id: str):
 async def events(request: Request, user_id: str):
     if user_id not in queues:
         queues[user_id] = asyncio.Queue()
-
+        print(f"{user_id} connected")
+        print(f"current queues: {queues}")
+        
     async def event_generator():
         try:
-            print(f"{user_id} connected")
-            print(f"current queues: {queues}")
+            
             while True:
                 if await request.is_disconnected():
                     print(f"User {user_id} disconnected")
