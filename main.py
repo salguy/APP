@@ -55,7 +55,6 @@ if __name__ == "__main__":
         "main:app",
         host="0.0.0.0",
         port=8000,
-        reload=True,         # 코드 수정하면 자동 리로드
         workers=1,           # 워커를 1개로 고정 (SSE 필수!)
         loop="uvloop",       # 고성능 이벤트 루프
         http="httptools"     # 빠른 HTTP 처리

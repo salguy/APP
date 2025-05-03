@@ -15,12 +15,13 @@ from domain.state import queues
 
 async def send_message(user_id: str, message: str):
     if user_id not in queues:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="User not found in queues")
     await queues[user_id].put(message)
     
 @router.post("/api/wake")
 async def wake(user_id: str):
-    await send_message(user_id, "살가이가 듣는 중이에요...")
+    asyncio.create_task(send_message(user_id, "살가이가 듣는 중이에요..."))
+
     return {"message": "Wake 메시지 전송 완료"}
 
 @router.get("/api/events/{user_id}")
@@ -103,6 +104,7 @@ async def testapi2(
                 - induce_medicine: 복약 유도
                 - taking_medicine_time: 복약 시점 도달
                 - check_medicine: 복용 완료 확인
+                - daily_talk: 일상 대화
     
     Returns:
         - message: AI 서버의 응답 메시지
@@ -145,7 +147,7 @@ async def testapi2(
     db: Session = Depends(get_db)
 ) -> TestResponse:
     """
-    2차 통합 테스트 API
+    프론트엔드 테스트 API
     
     Parameters:
         - audio: 음성 파일 (UploadFile)
@@ -157,6 +159,7 @@ async def testapi2(
                 - induce_medicine: 복약 유도
                 - taking_medicine_time: 복약 시점 도달
                 - check_medicine: 복용 완료 확인
+                - daily_talk: 일상 대화
     
     Returns:
         - message: AI 서버의 응답 메시지
@@ -170,12 +173,13 @@ async def testapi2(
     try:
         # 여기서 먼저 "살가이가 생각하는 중이에요..." 문구 보내기
         user_id = record.userId  # <- record 안에 user_id가 있어야 해 (없으면 수정 필요)
-        await send_message(user_id, "살가이가 생각하는 중이에요...")
+        asyncio.create_task(send_message(user_id, "살가이가 생각하는 중이에요..."))
         
         result = await second_test(request, db, record, audio)
     
          # ✅ 그 결과 중 message를 프론트에도 보내기
-        await send_message(user_id, result.message)
+        asyncio.create_task(send_message(user_id, result.message))
+
 
         # ✅ 마지막으로 클라이언트에 반환
         return result
