@@ -17,6 +17,8 @@ async def send_message(user_id: str, message: str):
     if user_id not in queues:
         raise HTTPException(status_code=404, detail="User not found in queues")
     await queues[user_id].put(message)
+    await asyncio.sleep(0)  # 컨텍스트 스위칭 강제
+
     
 @router.post("/api/wake")
 async def wake(user_id: str):
@@ -25,7 +27,7 @@ async def wake(user_id: str):
     return {"message": "Wake 메시지 전송 완료"}
 
 @router.get("/api/events/{user_id}")
-async def events(request: Request, user_id: str):
+async def sse(request: Request, user_id: str):
     if user_id not in queues:
         queues[user_id] = asyncio.Queue()
         print(f"user_id : {user_id} connected")
@@ -39,6 +41,8 @@ async def events(request: Request, user_id: str):
                     print(f"User {user_id} disconnected")
                     break
                 message = await queues[user_id].get()
+                await asyncio.sleep(0)  # 컨텍스트 스위칭 강제
+
                 yield f"data: {message}\n\n"
         finally:
             print(f"Cleaning up for user {user_id}")
