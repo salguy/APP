@@ -15,6 +15,7 @@ from domain.state import queues
 
 async def send_message(user_id: str, message: str):
     if user_id not in queues:
+        print(f"[SSE] {user_id} not connected")
         raise HTTPException(status_code=404, detail="User not found in queues")
     await queues[user_id].put(message)
     print(queues)
@@ -180,7 +181,7 @@ async def testapi2(
         # 여기서 먼저 "살가이가 생각하는 중이에요..." 문구 보내기
         user_id = record.userId  # <- record 안에 user_id가 있어야 해 (없으면 수정 필요)
         background_tasks.add_task(send_message, user_id, "살가이가 생각하는 중이에요...")
-        
+        await asyncio.sleep(0)
         result = await second_test(request, db, record, audio)
     
          # ✅ 그 결과 중 message를 프론트에도 보내기
