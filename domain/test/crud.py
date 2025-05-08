@@ -154,7 +154,7 @@ async def second_test(request: Request, db: Session, record: TestSchema, audio: 
         TestResponseError: 응답 처리 중 오류
     """
     await send_message(record.userId, "살가이가 생각하는 중이에요...") 
-    asyncio.sleep(0)  # 컨텍스트 스위칭 강제
+    await asyncio.sleep(0)  # 컨텍스트 스위칭 강제
     
     schedule = db.query(MedicationSchedule).filter(MedicationSchedule.id == record.scheduleId).first()
     if not schedule and record.scheduleId != -1:
