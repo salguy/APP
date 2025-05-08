@@ -11,7 +11,8 @@ import json
 import requests
 from domain.tts.tts import text_to_voice
 from datetime import datetime
-from domain.test.router import send_message
+from domain.test.sse import send_message
+
 
 
 load_dotenv()  # .env 파일 로드
@@ -152,6 +153,8 @@ async def second_test(request: Request, db: Session, record: TestSchema, audio: 
         TestProcessingError: 처리 과정 중 오류
         TestResponseError: 응답 처리 중 오류
     """
+    await send_message(record.userId, "살가이가 생각하는 중이에요...") 
+
     schedule = db.query(MedicationSchedule).filter(MedicationSchedule.id == record.scheduleId).first()
     if not schedule and record.scheduleId != -1:
         raise TestInputError(f"존재하지 않는 scheduleId: {record.scheduleId}")
