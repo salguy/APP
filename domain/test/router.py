@@ -8,7 +8,7 @@ from domain.test.schema import *
 import asyncio
 
 from domain.test.sse import send_message
-from domain.state import queues, clients
+from domain.state import queues
 
 
 
@@ -28,17 +28,16 @@ async def sse(request: Request, user_id: str):
         print(f"user_id : {user_id} connected")
         print(f"current queues: {queues}")
         
-    clients[user_id] = asyncio.Queue()
 
     async def event_generator():
         try:
             while True:
                 if await request.is_disconnected():
                     break
-                message = await clients[user_id].get()
+                message = await queues[user_id].get()
                 yield f"data: {message}\n\n"
         finally:
-            clients.pop(user_id, None)
+            queues.pop(user_id, None)
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
