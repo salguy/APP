@@ -12,7 +12,7 @@ from domain.tts.tts import text_to_voice
 from datetime import datetime
 from domain.test.sse import send_message
 import asyncio
-
+import httpx
 
 
 load_dotenv()  # .env 파일 로드
@@ -171,12 +171,13 @@ async def second_test(request: Request, db: Session, record: TestSchema, audio: 
         url = f"{AI_URL}/api/inference/{record.responsetype}"
         data = {"input_text": text}
         payload = json.dumps(data, ensure_ascii=False).encode("utf-8")
-
-        res = requests.post(
-            url,
-            data=payload,
-            headers={"Content-Type": "application/json; charset=utf-8"}
-        )
+        async with httpx.AsyncClient() as client:
+            
+            res = await client.post(
+                url,
+                data=payload,
+                headers={"Content-Type": "application/json; charset=utf-8"}
+            )
         
         if res.status_code != 200:
             raise TestResponseError(f"AI 서버 응답 오류: {res.status_code}")
