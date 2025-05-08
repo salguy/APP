@@ -170,18 +170,25 @@ async def second_test(request: Request, db: Session, record: TestSchema, audio: 
         
         url = f"{AI_URL}/api/inference/{record.responsetype}"
         data = {"input_text": text}
+        
+        print("🚀 LLM 요청 전송 시작")
+
         async with httpx.AsyncClient() as client:
             
-            res = await client.post(
-                url,
-                json=data
-            )
-            print("res: ", res)
+            try:
+                res = await client.post(url, json=data)
+                print("✅ LLM 응답 받음")
+                print("📦 상태코드:", res.status_code)
+                print("📦 응답 내용:", res.text)
+                res_data = res.json()
+                print("📦 파싱된 JSON:", res_data)
+            except Exception as e:
+                print("❌ httpx 요청 실패:", repr(e))
+                raise TestResponseError(f"httpx 요청 실패: {repr(e)}")
         
         if res.status_code != 200:
             raise TestResponseError(f"AI 서버 응답 오류: {res.status_code}")
             
-        res_data = res.json()
         if "model_output" not in res_data or "json" not in res_data["model_output"] or "response" not in res_data["model_output"]:
             raise TestResponseError("AI 서버 응답 형식 오류")
             
