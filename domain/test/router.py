@@ -169,16 +169,9 @@ async def testapi2(
         - HTTPException(500): 서버 내부 오류
     """
     try:
-        # 여기서 먼저 "살가이가 생각하는 중이에요..." 문구 보내기
-        user_id = record.userId  # <- record 안에 user_id가 있어야 해 (없으면 수정 필요)
-        result = await second_test(request, db, record, audio)
-    
-        
-
-
 
         # ✅ 마지막으로 클라이언트에 반환
-        return result
+        return await second_test(request, db, record, audio)
     
     except TestInputError as e:
         if "존재하지 않는" in str(e):
