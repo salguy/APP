@@ -1,6 +1,5 @@
 from models import *
 from domain.stt.stt import voice_to_text
-from fastapi.responses import JSONResponse
 from fastapi import Request, UploadFile
 from domain.stt.schema import *
 from sqlalchemy.orm import Session
@@ -12,6 +11,7 @@ import requests
 from domain.tts.tts import text_to_voice
 from datetime import datetime
 from domain.test.sse import send_message
+import asyncio
 
 
 
@@ -154,7 +154,8 @@ async def second_test(request: Request, db: Session, record: TestSchema, audio: 
         TestResponseError: 응답 처리 중 오류
     """
     await send_message(record.userId, "살가이가 생각하는 중이에요...") 
-
+    asyncio.sleep(0)  # 컨텍스트 스위칭 강제
+    
     schedule = db.query(MedicationSchedule).filter(MedicationSchedule.id == record.scheduleId).first()
     if not schedule and record.scheduleId != -1:
         raise TestInputError(f"존재하지 않는 scheduleId: {record.scheduleId}")
