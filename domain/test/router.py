@@ -28,7 +28,7 @@ async def sse(request: Request, user_id: str):
         print(f"user_id : {user_id} connected")
         print(f"current queues: {queues}")
         
-        clients[user_id] = asyncio.Queue()
+    clients[user_id] = asyncio.Queue()
 
     async def event_generator():
         try:
