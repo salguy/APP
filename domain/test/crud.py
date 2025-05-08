@@ -173,7 +173,7 @@ async def second_test(request: Request, db: Session, record: TestSchema, audio: 
         
         print("🚀 LLM 요청 전송 시작")
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=20.0) as client:
             
             try:
                 res = await client.post(url, json=data)
