@@ -11,7 +11,7 @@ import json
 import requests
 from domain.tts.tts import text_to_voice
 from datetime import datetime
-
+from domain.test.router import send_message
 
 
 load_dotenv()  # .env 파일 로드
@@ -184,6 +184,9 @@ async def second_test(request: Request, db: Session, record: TestSchema, audio: 
         model_output = res_data["model_output"]
         response_text = model_output["response"]
         med_time = res_data.get("med_time")
+        
+        await send_message(record.userId, response_text)
+        
         
         if record.scheduleId != -1 and med_time:
             try:

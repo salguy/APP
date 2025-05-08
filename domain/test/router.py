@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Request, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Request
 from fastapi.responses import StreamingResponse
 
 from sqlalchemy.orm import Session
@@ -148,7 +148,6 @@ async def testapi2(
 @router.post("/api/FEtest", summary="프론트엔드 테스트용 엔드포인트", response_model=TestResponse)
 async def testapi2(
     request: Request,
-    background_tasks: BackgroundTasks,
     audio: UploadFile = File(...),
     record: TestSchema = Depends(),
     db: Session = Depends(get_db)
@@ -180,12 +179,11 @@ async def testapi2(
     try:
         # 여기서 먼저 "살가이가 생각하는 중이에요..." 문구 보내기
         user_id = record.userId  # <- record 안에 user_id가 있어야 해 (없으면 수정 필요)
-        background_tasks.add_task(send_message, user_id, "살가이가 생각하는 중이에요...")
+        await send_message(user_id, "살가이가 생각하는 중이에요...") 
         await asyncio.sleep(0)
         result = await second_test(request, db, record, audio)
     
-         # ✅ 그 결과 중 message를 프론트에도 보내기
-        background_tasks.add_task(send_message, user_id, result.message)
+        
 
 
 
