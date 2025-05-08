@@ -8,6 +8,8 @@ from domain.medications import router as medicationRouter
 from domain.stt import router as sttrouter
 from domain.tts import router as ttsrouter
 from domain.test import router as testrouter
+import asyncio
+from domain.test.broadcast import broadcast_loop
 
 
 tags_metadata = [
@@ -21,8 +23,17 @@ tags_metadata = [
     }
 ]
 
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    asyncio.create_task(broadcast_loop())
+    yield
+    print("✅ 앱 종료")
+
 app = FastAPI(
-    openapi_tags=tags_metadata
+    openapi_tags=tags_metadata,
+    lifespan=lifespan
 )
 
 app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")

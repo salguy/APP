@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Request
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Request, FastAPI
 from fastapi.responses import StreamingResponse
 
 from sqlalchemy.orm import Session
@@ -8,7 +8,8 @@ from domain.test.schema import *
 import asyncio
 
 from domain.test.sse import send_message
-from domain.state import queues
+from domain.state import queues, clients
+
 
 
 router = APIRouter()
@@ -27,22 +28,17 @@ async def sse(request: Request, user_id: str):
         print(f"user_id : {user_id} connected")
         print(f"current queues: {queues}")
         
+        clients[user_id] = asyncio.Queue()
+
     async def event_generator():
         try:
-            
             while True:
                 if await request.is_disconnected():
-                    print(f"User {user_id} disconnected")
                     break
-                message = await queues[user_id].get()
-                await asyncio.sleep(0)  # 컨텍스트 스위칭 강제
-
+                message = await clients[user_id].get()
                 yield f"data: {message}\n\n"
         finally:
-            print(f"Cleaning up for user {user_id}")
-             # 큐 안에 남은 메시지가 없다면 삭제
-            if queues[user_id].empty():
-                queues.pop(user_id, None)
+            clients.pop(user_id, None)
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
@@ -181,3 +177,6 @@ async def testapi2(
         raise HTTPException(status_code=500, detail=str(e))
     except TestResponseError as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+    
+    
