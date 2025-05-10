@@ -166,7 +166,7 @@ async def testapi2(
     try:
 
         # ✅ 마지막으로 클라이언트에 반환
-        return await second_test(request, db, record, audio)
+        return await fe_test(request, db, record, audio)
     
     except TestInputError as e:
         if "존재하지 않는" in str(e):
