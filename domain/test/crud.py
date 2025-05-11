@@ -233,7 +233,7 @@ async def second_test(request: Request, db: Session, record: TestSchema, audio: 
 
 async def fe_test(request: Request, db: Session, record: TestSchema, audio: UploadFile) -> TestResponse:
     """
-    2차 통합 테스트를 수행합니다.
+    프론트엔드 테스트를 수행합니다.
     
     Args:
         request (Request): FastAPI 요청 객체
@@ -249,8 +249,7 @@ async def fe_test(request: Request, db: Session, record: TestSchema, audio: Uplo
         TestProcessingError: 처리 과정 중 오류
         TestResponseError: 응답 처리 중 오류
     """
-    await send_message(record.userId, "살가이가 생각하는 중이에요...") 
-    await asyncio.sleep(0)  # 컨텍스트 스위칭 강제
+    
     
     schedule = db.query(MedicationSchedule).filter(MedicationSchedule.id == record.scheduleId).first()
     if not schedule and record.scheduleId != -1:
@@ -259,7 +258,9 @@ async def fe_test(request: Request, db: Session, record: TestSchema, audio: Uplo
 
     if not user:
         raise TestInputError(f"존재하지 않는 userId: {record.userId}")
-
+    await send_message(record.userId, "살가이가 생각하는 중이에요...") 
+    await asyncio.sleep(0)  # 컨텍스트 스위칭 강제
+    
     try:
         contents = await audio.read()
         text = speech_to_text(contents)
@@ -284,17 +285,61 @@ async def fe_test(request: Request, db: Session, record: TestSchema, audio: Uplo
         
         if res.status_code != 200:
             raise TestResponseError(f"AI 서버 응답 오류: {res.status_code}")
+        
+        
+        if "model_output" in res_data:
+            model_output = res_data["model_output"]
+        if "response" in model_output:
+            response_text = model_output["response"]        
+            await send_message(record.userId, response_text)
+
+        if "intent" in model_output:
+            intent = model_output["intent"]
+        if res_data.get("med_time"):
+            med_time = res_data.get("med_time")
             
-        if "model_output" not in res_data or "json" not in res_data["model_output"] or "response" not in res_data["model_output"]:
+        if not (model_output and (response_text or intent)):
             raise TestResponseError("AI 서버 응답 형식 오류")
+        
+        if intent == "복약_일정_조회":
+            response_text = "복약 일정 조회는 아직 지원하지 않습니다."
+        elif intent == "일반_대화":
+            url = f"{AI_URL}/api/inference/daily_talk"
+            data = {"input_text": text}
             
-        model_output = res_data["model_output"]
-        response_text = model_output["response"]
-        med_time = res_data.get("med_time")
-        
-        await send_message(record.userId, response_text)
-        
-        
+            print("🚀 의도 파악 후 LLM 요청 재전송")
+
+            async with httpx.AsyncClient(timeout=20.0) as client:
+                
+                try:
+                    res = await client.post(url, json=data)
+                    print("✅ LLM 응답 받음")
+                    print("📦 상태코드:", res.status_code)
+                    print("📦 응답 내용:", res.text)
+                    res_data = res.json()
+                    print("📦 파싱된 JSON:", res_data)
+                except Exception as e:
+                    print("❌ httpx 요청 실패:", repr(e))
+                    raise TestResponseError(f"httpx 요청 실패: {repr(e)}")
+            
+            if res.status_code != 200:
+                raise TestResponseError(f"AI 서버 응답 오류: {res.status_code}")
+            if "model_output" in res_data:
+                model_output = res_data["model_output"]
+            if "response" in model_output:
+                response_text = model_output["response"]        
+                await send_message(record.userId, response_text)
+
+                
+            if not (model_output and (response_text or intent)):
+                raise TestResponseError("AI 서버 응답 형식 오류")
+            
+            
+        elif intent == "모호함":
+            response_text = "잘 이해하지 못했어요. 다시 한 번 말씀해주시겠어요?"
+            
+        else:
+            raise TestResponseError("AI 서버 응답 형식 오류")
         if record.scheduleId != -1 and med_time:
             try:
                 updated = update_taken_at_if_empty(db, schedule.id, med_time)
@@ -310,7 +355,8 @@ async def fe_test(request: Request, db: Session, record: TestSchema, audio: Uplo
             raise TestProcessingError("TTS 파일 생성 실패")
             
         file_url = f"{request.base_url}{filename}"
-        
+        await send_message(record.userId, response_text)
+
         return TestResponse(
             message=response_text,
             file_url=file_url

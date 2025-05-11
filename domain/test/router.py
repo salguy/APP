@@ -98,6 +98,7 @@ async def testapi2(
                 - taking_medicine_time: 복약 시점 도달
                 - check_medicine: 복용 완료 확인
                 - daily_talk: 일상 대화
+                - intent : 의도 파악
     
     Returns:
         - message: AI 서버의 응답 메시지
@@ -153,6 +154,7 @@ async def testapi2(
                 - taking_medicine_time: 복약 시점 도달
                 - check_medicine: 복용 완료 확인
                 - daily_talk: 일상 대화
+                - intent : 의도 파악
     
     Returns:
         - message: AI 서버의 응답 메시지

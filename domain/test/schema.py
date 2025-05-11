@@ -24,9 +24,9 @@ class ScheduleID(BaseModel):
 class TestSchema(BaseModel):
     userId: str = Field(..., description="유저 ID")
     scheduleId: int = Field(..., description="복약 스케줄 ID (-1인 경우 스케줄 검증 생략)")
-    responsetype: Literal['check_meal', 'induce_medicine', 'taking_medicine_time', 'check_medicine', 'daily_talk'] = Field(
+    responsetype: Literal['check_meal', 'induce_medicine', 'taking_medicine_time', 'check_medicine', 'daily_talk', 'intent'] = Field(
         ..., 
-        description="응답 타입: check_meal(복약 전 식사여부 체크), induce_medicine(복약 유도), taking_medicine_time(복약 시점 도달, 아무 음성이나 넣어도 됨), check_medicine(복용 완료 확인), daily_talk(일상 대화)"
+        description="응답 타입: check_meal(복약 전 식사여부 체크), induce_medicine(복약 유도), taking_medicine_time(복약 시점 도달, 아무 음성이나 넣어도 됨), check_medicine(복용 완료 확인), daily_talk(일상 대화), intent(의도 파악)"
     )
 
 class TestResponse(BaseModel):
