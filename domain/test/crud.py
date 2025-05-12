@@ -295,6 +295,8 @@ async def fe_test(request: Request, db: Session, record: TestSchema, audio: Uplo
 
         if "intent" in model_output:
             intent = model_output["intent"]
+            print("📦 AI가 파악한 의도:", intent)
+            
         if res_data.get("med_time"):
             med_time = res_data.get("med_time")
             
