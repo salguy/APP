@@ -289,19 +289,22 @@ async def fe_test(request: Request, db: Session, record: TestSchema, audio: Uplo
         
         if "model_output" in res_data:
             model_output = res_data["model_output"]
-        if "response" in model_output:
-            response_text = model_output["response"]        
-            await send_message(record.userId, response_text)
+            if "response" in model_output:
+                response_text = model_output["response"]        
+                await send_message(record.userId, response_text)
 
-        if "intent" in model_output:
-            intent = model_output["intent"]
-            print("📦 AI가 파악한 의도:", intent)
+            elif "intent" in model_output:
+                intent = model_output["intent"]
+                print("📦 AI가 파악한 의도:", intent)
+            else: 
+                raise TestResponseError("AI 서버 응답 형식 오류")
+        else: 
+                raise TestResponseError("AI 서버 응답 형식 오류")
             
         if res_data.get("med_time"):
             med_time = res_data.get("med_time")
             
-        if not (model_output and (response_text or intent)):
-            raise TestResponseError("AI 서버 응답 형식 오류")
+        
         
         if intent == "복약_일정_조회":
             response_text = "복약 일정 조회는 아직 지원하지 않습니다."
