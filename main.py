@@ -1,5 +1,6 @@
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from starlette.middleware.cors import CORSMiddleware
@@ -26,7 +27,12 @@ app = FastAPI(
 )
 
 app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
+app.mount("/assets", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static/assets")), name="assets")
 
+@app.get("/test")
+@app.get("/test/{full_path:path}")
+async def serve_react_app(request: Request, full_path: str =""):
+    return FileResponse(os.path.join("static", "index.html"))
 
 origins = [
     "*",
