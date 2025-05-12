@@ -27,7 +27,7 @@ app = FastAPI(
 )
 
 app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
-app.mount("/assets", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static/assets")), name="assets")
+app.mount("/test/assets", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static/assets")), name="assets")
 
 @app.get("/test")
 @app.get("/test/{full_path:path}")
