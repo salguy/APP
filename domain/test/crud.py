@@ -231,7 +231,7 @@ async def second_test(request: Request, db: Session, record: TestSchema, audio: 
 
 
 
-async def fe_test(request: Request, db: Session, record: TestSchema, audio: UploadFile) -> TestResponse:
+async def fe_test(request: Request, db: Session, record: TestSchema, audio: UploadFile) -> TestResponse | CheckMedicineResponse:
     """
     프론트엔드 테스트를 수행합니다.
     
