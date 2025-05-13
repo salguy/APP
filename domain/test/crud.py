@@ -286,6 +286,9 @@ async def fe_test(request: Request, db: Session, record: TestSchema, audio: Uplo
         if res.status_code != 200:
             raise TestResponseError(f"AI 서버 응답 오류: {res.status_code}")
         
+        model_output = None
+        response_text = None
+        intent = None
         
         if "model_output" in res_data:
             model_output = res_data["model_output"]
