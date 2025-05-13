@@ -26,11 +26,11 @@ def signup_user(db: Session, record: SignupRequest):
     return {"user_id": user.id, "message": "회원가입 완료"}
 
 def login_user(db: Session, record: LoginRequest):
-    user = db.query(User).filter(str(User.id) == record.user_id).first()
+    user = db.query(User).filter(User.id == record.user_id).first()
     if not user or not pwd_context.verify(record.password, user.password):
         raise ValueError(f"존재하지 않는 ID 혹은 비밀번호가 일치하지 않습니다.")
 
-    token = jwt.encode({"user_id": record.user_id}, SECRET_KEY, algorithm=ALGORITHM)
+    token = jwt.encode({"user_id": user.id}, SECRET_KEY, algorithm=ALGORITHM)
     return {"access_token": token, "token_type": "bearer"}
 
 

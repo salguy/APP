@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 from database import get_db
 from domain.user.crud import *
@@ -18,10 +18,17 @@ def signup(data: SignupRequest, db: Session = Depends(get_db)):
 
 
 @router.post("/api/user/login")
-def login(data: LoginRequest, db: Session = Depends(get_db)):
+def login(data: LoginRequest, response: Response, db: Session = Depends(get_db)):
     try:
         user_id = data.user_id
         login_result = login_user(db, data)  # 여기서 토큰 발급
+        response.set_cookie(
+            key="access_token",
+            value=login_result["access_token"],
+            httponly=True,
+            secure=True,
+            samesite="Lax"
+        )
         if not login_result["access_token"]:
             # ✅ 여기서 queues에 등록
             if user_id not in queues:
