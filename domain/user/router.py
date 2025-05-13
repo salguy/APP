@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Response, Request
 from sqlalchemy.orm import Session
 from database import get_db
 from domain.user.crud import *
@@ -7,6 +7,8 @@ from datetime import datetime
 from fastapi.security import OAuth2PasswordRequestForm
 from domain.state import queues
 import asyncio
+from jose import JWTError, jwt
+from fastapi.responses import JSONResponse
 
 router = APIRouter()
 
@@ -37,6 +39,24 @@ def login(data: LoginRequest, response: Response, db: Session = Depends(get_db))
         return login_result
     except ValueError as e:
         raise HTTPException(status_code=401, detail=str(e))
+
+
+@router.get("/api/user/verify")
+async def verify(request: Request, db: Session = Depends(get_db)):
+    try:
+        return verify_user(request, db)
+    except ValueError as e:
+        if str(e) == "No token found":
+            raise HTTPException(status_code=401, detail=str(e))
+        elif str(e) == "Invalid token":
+            raise HTTPException(status_code=404, detail=str(e))
+        elif str(e) == "Token decode error":
+            raise HTTPException(status_code=401, detail=str(e))
+        elif "User(id" in str(e):
+            raise HTTPException(status_code=404, detail=str(e))
+        else:
+            raise HTTPException(status_code=500, detail=str(e))
+        
 
 
 @router.put("/api/user/histories", summary="복약 시각 저장")

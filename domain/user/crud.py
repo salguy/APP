@@ -1,5 +1,8 @@
 from sqlalchemy.orm import Session
 from models import *
+from jose import jwt, JWTError
+from fastapi.responses import JSONResponse
+from fastapi import Request
 
 from domain.user.schema import *
 from passlib.context import CryptContext
@@ -32,6 +35,27 @@ def login_user(db: Session, record: LoginRequest):
 
     token = jwt.encode({"user_id": user.id}, SECRET_KEY, algorithm=ALGORITHM)
     return {"access_token": token, "token_type": "bearer"}
+
+
+def verify_user(request: Request, db: Session):
+    token = request.cookies.get("access_token")
+    if not token:
+        raise ValueError("No token found")
+    
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get("user_id")
+        if user_id is None:
+            raise ValueError("Invalid token")
+    except JWTError:
+        raise ValueError("Token decode error")
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise ValueError(f"User(id:{user.id}) not found")
+
+    return JSONResponse(content={"message": "Authenticated"}, status_code=200)
+
 
 
 def fill_taken_at(db: Session, record: MedicationRecordCreate):
