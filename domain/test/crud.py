@@ -305,46 +305,48 @@ async def fe_test(request: Request, db: Session, record: TestSchema, audio: Uplo
             med_time = res_data.get("med_time")
             
         
-        
-        if intent == "복약_일정_조회":
-            response_text = "복약 일정 조회는 아직 지원하지 않습니다."
-        elif intent == "일반_대화":
-            url = f"{AI_URL}/api/inference/daily_talk"
-            data = {"input_text": text}
-            
-            print("🚀 의도 파악 후 LLM 요청 재전송")
-
-            async with httpx.AsyncClient(timeout=20.0) as client:
+        if intent:
+            if intent == "복약_일정_조회":
+                response_text = "복약 일정 조회는 아직 지원하지 않습니다."
+            elif intent == "일반_대화":
+                url = f"{AI_URL}/api/inference/daily_talk"
+                data = {"input_text": text}
                 
-                try:
-                    res = await client.post(url, json=data)
-                    print("✅ LLM 응답 받음")
-                    print("📦 상태코드:", res.status_code)
-                    print("📦 응답 내용:", res.text)
-                    res_data = res.json()
-                    print("📦 파싱된 JSON:", res_data)
-                except Exception as e:
-                    print("❌ httpx 요청 실패:", repr(e))
-                    raise TestResponseError(f"httpx 요청 실패: {repr(e)}")
-            
-            if res.status_code != 200:
-                raise TestResponseError(f"AI 서버 응답 오류: {res.status_code}")
-            if "model_output" in res_data:
-                model_output = res_data["model_output"]
-            if "response" in model_output:
-                response_text = model_output["response"]        
-                await send_message(record.userId, response_text)
+                print("🚀 의도 파악 후 LLM 요청 재전송")
 
+                async with httpx.AsyncClient(timeout=20.0) as client:
+                    
+                    try:
+                        res = await client.post(url, json=data)
+                        print("✅ LLM 응답 받음")
+                        print("📦 상태코드:", res.status_code)
+                        print("📦 응답 내용:", res.text)
+                        res_data = res.json()
+                        print("📦 파싱된 JSON:", res_data)
+                    except Exception as e:
+                        print("❌ httpx 요청 실패:", repr(e))
+                        raise TestResponseError(f"httpx 요청 실패: {repr(e)}")
                 
-            if not (model_output and (response_text or intent)):
+                if res.status_code != 200:
+                    raise TestResponseError(f"AI 서버 응답 오류: {res.status_code}")
+                if "model_output" in res_data:
+                    model_output = res_data["model_output"]
+                if "response" in model_output:
+                    response_text = model_output["response"]        
+                    await send_message(record.userId, response_text)
+
+                    
+                if not (model_output and (response_text or intent)):
+                    raise TestResponseError("AI 서버 응답 형식 오류")
+                
+                
+            elif intent == "모호함":
+                response_text = "잘 이해하지 못했어요. 다시 한 번 말씀해주시겠어요?"
+                
+            else:
                 raise TestResponseError("AI 서버 응답 형식 오류")
             
             
-        elif intent == "모호함":
-            response_text = "잘 이해하지 못했어요. 다시 한 번 말씀해주시겠어요?"
-            
-        else:
-            raise TestResponseError("AI 서버 응답 형식 오류")
         if record.scheduleId != -1 and med_time:
             try:
                 updated = update_taken_at_if_empty(db, schedule.id, med_time)
