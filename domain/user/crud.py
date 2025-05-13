@@ -34,7 +34,7 @@ def login_user(db: Session, record: LoginRequest):
         raise ValueError(f"존재하지 않는 ID 혹은 비밀번호가 일치하지 않습니다.")
 
     token = jwt.encode({"user_id": user.id}, SECRET_KEY, algorithm=ALGORITHM)
-    return {"access_token": token, "token_type": "bearer"}
+    return JSONResponse(content={"access_token": token, "token_type": "bearer"})
 
 
 def verify_user(request: Request, db: Session):

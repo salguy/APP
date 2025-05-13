@@ -24,7 +24,8 @@ def login(data: LoginRequest, response: Response, db: Session = Depends(get_db))
     try:
         user_id = data.user_id
         login_result = login_user(db, data)  # 여기서 토큰 발급
-        response.set_cookie(
+        
+        login_result.set_cookie(
             key="access_token",
             value=login_result["access_token"],
             httponly=True,
