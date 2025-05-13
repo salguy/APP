@@ -27,7 +27,7 @@ def login(data: LoginRequest, response: Response, db: Session = Depends(get_db))
         
         login_result.set_cookie(
             key="access_token",
-            value=login_result["access_token"],
+            value=login_result.json()["access_token"],
             httponly=True,
             secure=True,
             samesite="Lax"
@@ -38,6 +38,7 @@ def login(data: LoginRequest, response: Response, db: Session = Depends(get_db))
                 queues[user_id] = asyncio.Queue()
                 print(f"Login | user_id : {user_id} connected")
         return login_result
+    
     except ValueError as e:
         raise HTTPException(status_code=401, detail=str(e))
 
