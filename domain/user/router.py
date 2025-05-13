@@ -44,7 +44,7 @@ def login(data: LoginRequest, response: Response, db: Session = Depends(get_db))
 @router.get("/api/user/verify")
 async def verify(request: Request, db: Session = Depends(get_db)):
     try:
-        print(request)
+        print(request.cookies)
         return verify_user(request, db)
     except ValueError as e:
         if str(e) == "No token found":
