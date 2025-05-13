@@ -368,7 +368,7 @@ async def fe_test(request: Request, db: Session, record: TestSchema, audio: Uplo
         await send_message(record.userId, response_text)
 
         if record.responsetype == "check_medicine":
-            return TestResponse(
+            return CheckMedicineResponse(
                 message=response_text,
                 file_url=file_url,
                 success=json.loads(model_output["json"])["약 복용 여부"]

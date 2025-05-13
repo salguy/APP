@@ -32,3 +32,8 @@ class TestSchema(BaseModel):
 class TestResponse(BaseModel):
     message: str = Field(..., description="AI 서버의 응답 메시지")
     file_url: str = Field(..., description="생성된 음성 파일의 URL")
+    
+class CheckMedicineResponse(BaseModel):
+    message: str = Field(..., description="AI 서버의 응답 메시지")
+    file_url: str = Field(..., description="생성된 음성 파일의 URL")
+    success: bool = Field(..., description="응답 성공 여부")
