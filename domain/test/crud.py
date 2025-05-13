@@ -231,7 +231,7 @@ async def second_test(request: Request, db: Session, record: TestSchema, audio: 
 
 
 
-async def fe_test(request: Request, db: Session, record: TestSchema, audio: UploadFile):
+async def fe_test(request: Request, db: Session, record: TestSchema, audio: UploadFile) -> TestResponse:
     """
     프론트엔드 테스트를 수행합니다.
     
@@ -373,7 +373,7 @@ async def fe_test(request: Request, db: Session, record: TestSchema, audio: Uplo
             success_medicine = False
             
         if record.responsetype == "check_medicine":
-            return CheckMedicineResponse(
+            return TestResponse(
                 message=response_text,
                 file_url=file_url,
                 success=success_medicine
