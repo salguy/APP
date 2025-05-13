@@ -366,7 +366,12 @@ async def fe_test(request: Request, db: Session, record: TestSchema, audio: Uplo
             
         file_url = f"{request.base_url}{filename}"
         await send_message(record.userId, response_text)
-
+        if record.responsetype == "check_medicine":
+            return TestResponse(
+                message=response_text,
+                file_url=file_url,
+                success=model_output["json"]["약 복용 여부"]
+            )
         return TestResponse(
             message=response_text,
             file_url=file_url
