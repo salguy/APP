@@ -373,11 +373,12 @@ async def fe_test(request: Request, db: Session, record: TestSchema, audio: Uplo
                 file_url=file_url,
                 success=json.loads(model_output["json"])["약 복용 여부"]
             )
-        return TestResponse(
-            message=response_text,
-            file_url=file_url
-        )
-        
+        else:
+            return TestResponse(
+                message=response_text,
+                file_url=file_url
+            )
+            
     except requests.RequestException as e:
         raise TestProcessingError(f"AI 서버 통신 오류: {str(e)}")
     except Exception as e:
