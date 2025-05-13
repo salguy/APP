@@ -22,21 +22,14 @@ def signup(data: SignupRequest, db: Session = Depends(get_db)):
 @router.post("/api/user/login")
 def login(data: LoginRequest, response: Response, db: Session = Depends(get_db)):
     try:
-        user_id = data.user_id
+        #user_id = data.user_id
         login_result = login_user(db, data)  # 여기서 토큰 발급
         
-        login_result.set_cookie(
-            key="access_token",
-            value=login_result.json()["access_token"],
-            httponly=True,
-            secure=True,
-            samesite="Lax"
-        )
-        if not login_result["access_token"]:
-            # ✅ 여기서 queues에 등록
-            if user_id not in queues:
-                queues[user_id] = asyncio.Queue()
-                print(f"Login | user_id : {user_id} connected")
+        #if not login_result["access_token"]:
+        #    # ✅ 여기서 queues에 등록
+        #    if user_id not in queues:
+         #       queues[user_id] = asyncio.Queue()
+         #       print(f"Login | user_id : {user_id} connected")
         return login_result
     
     except ValueError as e:

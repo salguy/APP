@@ -32,9 +32,17 @@ def login_user(db: Session, record: LoginRequest):
     user = db.query(User).filter(User.id == record.user_id).first()
     if not user or not pwd_context.verify(record.password, user.password):
         raise ValueError(f"존재하지 않는 ID 혹은 비밀번호가 일치하지 않습니다.")
-
+    
     token = jwt.encode({"user_id": user.id}, SECRET_KEY, algorithm=ALGORITHM)
-    return JSONResponse(content={"access_token": token, "token_type": "bearer"})
+    response = JSONResponse(content={"access_token": token, "token_type": "bearer"})
+    response.set_cookie(
+            key="access_token",
+            value=token,
+            httponly=True,
+            secure=False,
+            samesite="Lax"
+        )
+    return response
 
 
 def verify_user(request: Request, db: Session):
