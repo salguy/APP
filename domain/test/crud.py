@@ -368,6 +368,7 @@ async def fe_test(request: Request, db: Session, record: TestSchema, audio: Uplo
         await send_message(record.userId, response_text)
         
         success_medicine = json.loads(model_output["json"])["약 복용 여부"]
+        print("[약 복용 여부]: ", success_medicine)
         if success_medicine == None:
             success_medicine = False
             
