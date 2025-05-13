@@ -370,11 +370,12 @@ async def fe_test(request: Request, db: Session, record: TestSchema, audio: Uplo
         success_medicine = json.loads(model_output["json"])["약 복용 여부"]
         if success_medicine == None:
             success_medicine = False
+            
         if record.responsetype == "check_medicine":
             return CheckMedicineResponse(
                 message=response_text,
                 file_url=file_url,
-                success=json.loads(model_output["json"])["약 복용 여부"]
+                success=success_medicine
             )
         else:
             return TestResponse(
