@@ -289,7 +289,7 @@ async def fe_test(request: Request, db: Session, record: TestSchema, audio: Uplo
         model_output = None
         response_text = None
         intent = None
-        
+        med_time = None
         if "model_output" in res_data:
             model_output = res_data["model_output"]
             if "response" in model_output:
