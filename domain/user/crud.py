@@ -63,9 +63,25 @@ def verify_user(request: Request, db: Session):
         raise ValueError(f"User(id:{user.id}) not found")
 
     return JSONResponse(content={"message": "Authenticated"}, status_code=200)
-
-
-
+def get_my_info(request: Request, db: Session):
+    try:
+        token = request.cookies.get("access_token")
+        if not token:
+            raise ValueError("No token found")
+        
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get("user_id")
+        if user_id is None:
+            raise ValueError("Invalid token")
+        
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            raise ValueError(f"존재하지 않는 user_id: {user_id}")
+        profile_img = 'static/profile_img/' + str(user.id) + '.jpg'
+        return {"user_id": user.id, "name": user.name, "profile_img": profile_img}
+    except JWTError:
+        raise ValueError("Token decode error")
+    
 def fill_taken_at(db: Session, record: MedicationRecordCreate):
     
     # 해당 스케줄을 조회

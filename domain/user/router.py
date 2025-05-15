@@ -53,7 +53,22 @@ async def verify(request: Request, db: Session = Depends(get_db)):
         else:
             raise HTTPException(status_code=500, detail=str(e))
         
-
+@router.get("/api/user/me")
+async def get_me(request: Request, db: Session = Depends(get_db)):
+    try:
+        print(request.headers)
+        return get_my_info(request, db)
+    except ValueError as e:
+        if str(e) == "No token found":
+            raise HTTPException(status_code=401, detail=str(e))
+        elif str(e) == "Invalid token":
+            raise HTTPException(status_code=404, detail=str(e))
+        elif str(e) == "Token decode error":
+            raise HTTPException(status_code=401, detail=str(e))
+        elif "존재하지 않는" in str(e):
+            raise HTTPException(status_code=404, detail=str(e))
+        else:
+            raise HTTPException(status_code=500, detail=str(e))
 
 @router.put("/api/user/histories", summary="복약 시각 저장")
 async def add_medication_history(record: MedicationRecordCreate, db: Session = Depends(get_db)):
