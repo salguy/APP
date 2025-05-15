@@ -1,7 +1,6 @@
 import requests
 from gtts import gTTS
 
-# LLM_API_URL = "http://3.34.179.85:8000/api/llm"  # Replace with your actual LLM server address
 
 def get_llm_out(text):
 #    try:

@@ -77,7 +77,7 @@ def get_my_info(request: Request, db: Session):
         user = db.query(User).filter(User.id == user_id).first()
         if not user:
             raise ValueError(f"존재하지 않는 user_id: {user_id}")
-        profile_img = 'static/profile_img/' + str(user.id) + '.jpg'
+        profile_img = '/static/profile_img/' + str(user.id) + '.jpg'
         return {"user_id": user.id, "name": user.name, "profile_img": profile_img}
     except JWTError:
         raise ValueError("Token decode error")
