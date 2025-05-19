@@ -36,7 +36,7 @@ async def serve_react_app(request: Request, full_path: str =""):
 
 origins = [
     "http://localhost:5173",
-    "*"
+    "1.209.175.118"
 ]
 
 app.add_middleware(
