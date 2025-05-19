@@ -14388,12 +14388,9 @@ const sirenImg = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACkAAAAsCAYAAAD4
 const characterImg = "/test/assets/character-BACtWP6K.png";
 function Home() {
   const [message, setMessage] = reactExports.useState("도움이 필요하시면 불러주세요");
-  const [currentTime, setCurrentTime] = reactExports.useState("");
   const [currentDate, setCurrentDate] = reactExports.useState("");
-  const [ampm, timeOnly] = reactExports.useMemo(() => {
-    if (currentTime.includes(" ")) return currentTime.split(" ");
-    return ["22", "33"];
-  }, [currentTime]);
+  const [ampm, setAmpm] = reactExports.useState("");
+  const [timeOnly, setTimeOnly] = reactExports.useState("");
   const API_URL = "http://3.34.179.85:8000";
   const [userInfo, setUserInfo] = reactExports.useState(null);
   console.log("✅ Home.tsx 렌더링 시작");
@@ -14426,9 +14423,10 @@ function Home() {
       const now = /* @__PURE__ */ new Date();
       const hours = now.getHours();
       const minutes = now.getMinutes().toString().padStart(2, "0");
-      const ampm2 = hours >= 12 ? "오후" : "오전";
+      const am = hours >= 12 ? "오후" : "오전";
       const displayHour = hours % 12 === 0 ? 12 : hours % 12;
-      setCurrentTime(`${ampm2} ${displayHour}:${minutes}`);
+      setAmpm(am);
+      setTimeOnly(`${displayHour}:${minutes}`);
       const month = now.getMonth() + 1;
       const date = now.getDate();
       const weekdayNames = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
@@ -14466,7 +14464,7 @@ function Home() {
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "col-span-2 flex flex-col items-end text-right justify-between py-6 z-10 pr-24", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col top-8 right-8", children: [
-        currentTime && ampm && timeOnly && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "w-[218px] h-[56px]", children: [
+        ampm && timeOnly && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "w-[218px] h-[56px]", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[32px] text-gray-400 mr-1", children: ampm }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[50px] font-bold text-gray-800", children: timeOnly })
         ] }),
