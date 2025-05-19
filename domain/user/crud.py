@@ -63,6 +63,7 @@ def verify_user(request: Request, db: Session):
         raise ValueError(f"User(id:{user.id}) not found")
 
     return JSONResponse(content={"message": "Authenticated"}, status_code=200)
+
 def get_my_info(request: Request, db: Session):
     try:
         token = request.cookies.get("access_token")
