@@ -39,8 +39,8 @@ def login_user(db: Session, record: LoginRequest):
             key="access_token",
             value=token,
             httponly=True,
-            secure=True,
-            samesite="None"
+            secure=False,
+            samesite="Lax"
         )
     return response
 
