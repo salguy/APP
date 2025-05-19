@@ -40,7 +40,7 @@ def login_user(db: Session, record: LoginRequest):
             value=token,
             httponly=True,
             secure=False,
-            samesite="Lax"
+            samesite="None"
         )
     return response
 
