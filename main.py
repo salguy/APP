@@ -35,7 +35,8 @@ async def serve_react_app(request: Request, full_path: str =""):
     return FileResponse(os.path.join("static", "index.html"))
 
 origins = [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "*"
 ]
 
 app.add_middleware(
