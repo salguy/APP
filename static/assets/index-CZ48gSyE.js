@@ -14405,10 +14405,12 @@ function Home() {
       console.error("유저 정보 가져오기 실패:", err);
     });
   }, []);
-  if (!userInfo) return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { children: "로딩 중...!!!!!!!!!!!!!!!" });
-  else console.log("userInfo???:", userInfo);
   reactExports.useEffect(() => {
-    if (!userInfo) return;
+    if (!userInfo) {
+      console.log("유저 정보가 없습니다. 이벤트 소스를 생성하지 않습니다.");
+      return;
+    }
+    console.log("userInfo???:", userInfo);
     const eventSource = new EventSource(`${API_URL}/api/events/${userInfo.user_id}`);
     eventSource.onmessage = (event) => {
       console.log("Event received:", event.data);
@@ -14437,11 +14439,11 @@ function Home() {
     const interval = setInterval(updateTimeAndDate, 6e4);
     return () => clearInterval(interval);
   }, []);
-  if (userInfo.profile_img) console.log(`Profile Img URL: ${API_URL}${(userInfo == null ? void 0 : userInfo.profile_img) ?? ""}`);
+  if (userInfo && userInfo.profile_img) console.log(`Profile Img URL: ${API_URL}${(userInfo == null ? void 0 : userInfo.profile_img) ?? ""}`);
   else console.log("Profile Img URL: 없음");
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative w-screen h-screen grid grid-cols-12 bg-white text-gray-800", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "col-span-2 bg-gradient-to-b flex flex-col items-center justify-between py-8 z-10", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col items-center", children: [
+      userInfo && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col items-center", children: [
         userInfo.profile_img && /* @__PURE__ */ jsxRuntimeExports.jsx(
           "img",
           {
